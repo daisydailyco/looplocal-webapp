@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shared List - LoopLocal</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://js.radar.com/v4/radar.min.js"></script>
+</head>
+<body>
+  <div class="share-container">
+    <!-- Loading State -->
+    <div id="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading shared list...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="error-state" style="display: none;">
+      <div class="error-icon">⚠️</div>
+      <h2>List Not Found</h2>
+      <p>This shared list doesn't exist or has been removed.</p>
+      <a href="/" class="cta-button">Go to LoopLocal</a>
+    </div>
+
+    <!-- Content (Hidden Until Loaded) -->
+    <div id="content" style="display: none;">
+      <!-- Header -->
+      <div class="share-header">
+        <div class="logo-small">
+          <a href="/">LoopLocal</a>
+        </div>
+      </div>
+
+      <!-- Category Info -->
+      <div class="category-header">
+        <h1 id="category-name">Loading...</h1>
+        <div class="category-meta">
+          <span id="item-count">0 places</span>
+          <span class="separator">•</span>
+          <span id="view-count">0 views</span>
+        </div>
+      </div>
+
+      <!-- Map Container -->
+      <div id="map-container" class="map-container">
+        <div id="radar-map"></div>
+      </div>
+
+      <!-- Location Cards -->
+      <div id="location-list" class="location-list">
+        <!-- Cards will be inserted here by JavaScript -->
+      </div>
+
+      <!-- CTA Section -->
+      <div class="cta-section">
+        <h2>Create Your Own Lists</h2>
+        <p>Save and organize local spots from Instagram</p>
+        <a href="https://chrome.google.com/webstore" class="cta-button" target="_blank">
+          Get LoopLocal Extension
+        </a>
+      </div>
+
+      <!-- Footer -->
+      <div class="share-footer">
+        <p>Shared with <a href="/">LoopLocal</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/share.js"></script>
+</body>
+</html>
