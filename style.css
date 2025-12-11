@@ -6,8 +6,8 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(135deg, #e7ac6d 0%, #db3f1d 100%);
-  color: white;
+  background: linear-gradient(135deg, #ffffff 0%, #F0F0F0 100%);
+  color: #000000;
   min-height: 100vh;
 }
 
@@ -62,15 +62,16 @@ body {
 }
 
 .feature-card {
-  background: rgba(255, 255, 255, 0.1);
+  background: white;
   border-radius: 16px;
   padding: 30px;
   text-align: center;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .feature-card:hover {
-  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   transform: translateY(-4px);
 }
 
@@ -93,8 +94,8 @@ body {
 
 .cta-button {
   display: inline-block;
-  background: rgba(255, 255, 255, 0.25);
-  color: white;
+  background: white;
+  color: #000000;
   text-decoration: none;
   padding: 16px 40px;
   border-radius: 12px;
@@ -104,7 +105,7 @@ body {
 }
 
 .cta-button:hover {
-  background: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   transform: translateY(-2px);
 }
 
@@ -130,8 +131,8 @@ body {
 .spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid white;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #000000;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 20px;
@@ -154,7 +155,7 @@ body {
 
 .share-header {
   padding: 20px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   margin-bottom: 30px;
 }
 
@@ -162,7 +163,7 @@ body {
   font-size: 28px;
   font-weight: 700;
   letter-spacing: 1px;
-  color: white;
+  color: #000000;
   text-decoration: none;
 }
 
@@ -187,11 +188,12 @@ body {
 }
 
 .map-container {
-  background: rgba(255, 255, 255, 0.1);
+  background: white;
   border-radius: 16px;
   overflow: hidden;
   margin-bottom: 40px;
   height: 400px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 #radar-map {
@@ -207,22 +209,24 @@ body {
 }
 
 .location-card {
-  background: rgba(255, 255, 255, 0.1);
+  background: white;
   border-radius: 12px;
   padding: 20px;
   transition: all 0.2s;
   cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .location-card:hover {
-  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   transform: translateY(-2px);
 }
 
 .location-number {
   display: inline-block;
-  background: rgba(255, 255, 255, 0.25);
-  color: white;
+  background: rgba(66, 167, 70, 0.1);
+  border: 1px solid rgba(66, 167, 70, 0.3);
+  color: #42A746;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -253,9 +257,10 @@ body {
 .cta-section {
   text-align: center;
   padding: 60px 20px;
-  background: rgba(255, 255, 255, 0.1);
+  background: white;
   border-radius: 16px;
   margin-bottom: 40px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .cta-section h2 {
@@ -278,7 +283,7 @@ body {
 }
 
 .share-footer a {
-  color: white;
+  color: #000000;
   text-decoration: underline;
 }
 
