@@ -95,20 +95,22 @@ function initializeRadarMap(items) {
 
   // Add markers for each location
   items.forEach((item, index) => {
-    // For now, use placeholder coordinates (St. Pete area)
-    // In production, you'd geocode the addresses
-    const lat = 27.7676 + (Math.random() - 0.5) * 0.1;
-    const lng = -82.6403 + (Math.random() - 0.5) * 0.1;
+    // Use actual coordinates from saved data
+    const lat = item.latitude || 27.7676;
+    const lng = item.longitude || -82.6403;
 
-    const marker = Radar.ui.marker({
-      text: (index + 1).toString(),
-      marker: 'Untitled design (60).png',
-      color: '#42A746'
-    })
-      .setLngLat([lng, lat])
-      .addTo(radarMap);
+    // Only add marker if we have valid coordinates
+    if (item.latitude && item.longitude) {
+      const marker = Radar.ui.marker({
+        text: (index + 1).toString(),
+        marker: 'Untitled design (60).png',
+        color: '#42A746'
+      })
+        .setLngLat([lng, lat])
+        .addTo(radarMap);
 
-    markers.push(marker);
+      markers.push(marker);
+    }
   });
 }
 
