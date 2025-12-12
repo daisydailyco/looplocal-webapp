@@ -85,9 +85,10 @@ function initializeRadarMap(items) {
   // Initialize Radar
   Radar.initialize(RADAR_API_KEY);
 
-  // Create map
+  // Create map with custom style
   radarMap = Radar.ui.map({
     container: 'radar-map',
+    style: '6ca227b6-fe94-4211-ba2a-1ef204aaf55a',
     center: [items[0]?.longitude || -82.6403, items[0]?.latitude || 27.7676],
     zoom: 12,
   });
@@ -101,7 +102,7 @@ function initializeRadarMap(items) {
 
     const marker = Radar.ui.marker({
       text: (index + 1).toString(),
-      color: '#667eea'
+      color: '#42A746'
     })
       .setLngLat([lng, lat])
       .addTo(radarMap);
