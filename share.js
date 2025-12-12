@@ -85,77 +85,80 @@ function initializeRadarMap(items) {
   // Initialize Radar
   Radar.initialize(RADAR_API_KEY);
 
-  // Create map with custom style
+  // Create map - simplified to match working example
   radarMap = Radar.ui.map({
     container: 'radar-map',
-    style: '6ca227b6-fe94-4211-ba2a-1ef204aaf55a',
-    center: [items[0]?.longitude || -82.6403, items[0]?.latitude || 27.7676],
+    style: 'radar-default-v1',
+    center: [-82.6403, 27.7676], // St. Pete default
     zoom: 12,
   });
 
-  // Add markers for each location
-  items.forEach((item, index) => {
-    // Use actual coordinates from saved data
-    const lat = item.latitude || 27.7676;
-    const lng = item.longitude || -82.6403;
+  // Wait for map to load before adding markers
+  radarMap.on('load', () => {
+    // Add markers for each location
+    items.forEach((item, index) => {
+      // Only add marker if we have valid coordinates
+      if (item.latitude && item.longitude) {
+        console.log(`Adding marker ${index + 1} at:`, item.latitude, item.longitude);
 
-    // Only add marker if we have valid coordinates
-    if (item.latitude && item.longitude) {
-      const venue = item.venue_name || item.address || item.event_name || 'Saved Location';
-      const author = item.author ? (item.author.startsWith('@') ? item.author : '@' + item.author) : '';
-      const eventDate = formatEventDate(item.event_date);
-      const imageUrl = item.images && item.images[0] ? item.images[0] : '';
+        const venue = item.venue_name || item.address || item.event_name || 'Saved Location';
+        const author = item.author ? (item.author.startsWith('@') ? item.author : '@' + item.author) : '';
+        const eventDate = formatEventDate(item.event_date);
+        const imageUrl = item.images && item.images[0] ? item.images[0] : '';
 
-      // Create popup HTML
-      let popupHTML = `
-        <div style="text-align: center; padding: 8px; min-width: 200px;">
-          <div style="background: rgba(66, 167, 70, 0.1); border: 1px solid rgba(66, 167, 70, 0.3); color: #42A746; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-block; margin-bottom: 8px;">
-            ${index + 1}
-          </div>
-          <h3 style="margin: 8px 0; font-size: 16px; font-weight: 600; color: #000000;">${venue}</h3>
-      `;
+        // Create popup HTML
+        let popupHTML = `
+          <div style="text-align: center; padding: 8px; min-width: 200px;">
+            <div style="background: rgba(66, 167, 70, 0.1); border: 1px solid rgba(66, 167, 70, 0.3); color: #42A746; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-block; margin-bottom: 8px;">
+              ${index + 1}
+            </div>
+            <h3 style="margin: 8px 0; font-size: 16px; font-weight: 600; color: #000000;">${venue}</h3>
+        `;
 
-      if (imageUrl) {
-        popupHTML += `<img src="${imageUrl}" style="width: 100%; max-width: 200px; border-radius: 8px; margin: 8px 0;" />`;
-      }
-
-      if (author) {
-        popupHTML += `<div style="font-size: 13px; color: #666; margin: 4px 0;">${author}</div>`;
-      }
-
-      if (eventDate) {
-        popupHTML += `<div style="font-size: 13px; color: #666; margin: 4px 0;">${eventDate}</div>`;
-      }
-
-      if (item.url) {
-        popupHTML += `<a href="${item.url}" target="_blank" style="display: inline-block; margin-top: 8px; padding: 6px 12px; background: #42A746; color: white; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 600;">View Post</a>`;
-      }
-
-      popupHTML += '</div>';
-
-      const marker = Radar.ui.marker({
-        text: (index + 1).toString(),
-        color: '#42A746',
-        popup: {
-          html: popupHTML
+        if (imageUrl) {
+          popupHTML += `<img src="${imageUrl}" style="width: 100%; max-width: 200px; border-radius: 8px; margin: 8px 0;" />`;
         }
-      })
-        .setLngLat([lng, lat])
-        .addTo(radarMap);
 
-      markers.push(marker);
-    }
-  });
+        if (author) {
+          popupHTML += `<div style="font-size: 13px; color: #666; margin: 4px 0;">${author}</div>`;
+        }
 
-  // Auto-fit map to show all markers
-  if (markers.length > 0) {
-    radarMap.on('load', () => {
+        if (eventDate) {
+          popupHTML += `<div style="font-size: 13px; color: #666; margin: 4px 0;">${eventDate}</div>`;
+        }
+
+        if (item.url) {
+          popupHTML += `<a href="${item.url}" target="_blank" style="display: inline-block; margin-top: 8px; padding: 6px 12px; background: #42A746; color: white; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 600;">View Post</a>`;
+        }
+
+        popupHTML += '</div>';
+
+        // Create marker using simple pattern that works
+        const marker = Radar.ui.marker({
+          color: '#42A746',
+          popup: {
+            html: popupHTML
+          }
+        })
+          .setLngLat([item.longitude, item.latitude])
+          .addTo(radarMap);
+
+        markers.push(marker);
+      } else {
+        console.log(`Skipping item ${index + 1} - no coordinates`);
+      }
+    });
+
+    // Auto-fit map to show all markers
+    if (markers.length > 0) {
       radarMap.fitToMarkers({
         padding: { top: 50, bottom: 50, left: 50, right: 50 },
         maxZoom: 15
       });
-    });
-  }
+    } else {
+      console.log('No markers to display - items may not have coordinates');
+    }
+  });
 }
 
 function formatEventDate(dateString) {
