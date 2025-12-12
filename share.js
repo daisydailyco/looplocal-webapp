@@ -135,10 +135,7 @@ function initializeRadarMap(items) {
 
       const marker = Radar.ui.marker({
         text: (index + 1).toString(),
-        marker: 'Untitled design (60).png',
         color: '#42A746',
-        width: 40,
-        height: 40,
         popup: {
           html: popupHTML
         }
