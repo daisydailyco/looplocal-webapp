@@ -20,6 +20,21 @@ async function loadSharedList() {
 
     const data = await response.json();
 
+    // Debug: Log what data we received
+    console.log('📥 Received data from backend:', data);
+    console.log('📍 Items received:', data.items?.length || 0);
+    if (data.items) {
+      data.items.forEach((item, i) => {
+        console.log(`Item ${i + 1}:`, {
+          name: item.venue_name || item.event_name,
+          address: item.address,
+          lat: item.latitude,
+          lng: item.longitude,
+          hasCoords: !!(item.latitude && item.longitude)
+        });
+      });
+    }
+
     // Hide loading, show content
     document.getElementById('loading').style.display = 'none';
     document.getElementById('content').style.display = 'block';
@@ -37,8 +52,19 @@ async function loadSharedList() {
 }
 
 function renderCategoryHeader(data) {
+  // Count items with coordinates
+  const itemsWithCoords = data.items.filter(item => item.latitude && item.longitude).length;
+  const totalItems = data.items.length;
+
   document.getElementById('category-name').textContent = data.category;
-  document.getElementById('item-count').textContent = `${data.items.length} place${data.items.length !== 1 ? 's' : ''}`;
+
+  // Show count with location info if some items are missing coordinates
+  if (itemsWithCoords < totalItems) {
+    document.getElementById('item-count').textContent = `${itemsWithCoords} of ${totalItems} place${totalItems !== 1 ? 's' : ''} on map`;
+  } else {
+    document.getElementById('item-count').textContent = `${totalItems} place${totalItems !== 1 ? 's' : ''}`;
+  }
+
   document.getElementById('view-count').textContent = `${data.views} view${data.views !== 1 ? 's' : ''}`;
   document.title = `${data.category} - LoopLocal`;
 }
@@ -47,7 +73,20 @@ function renderLocationCards(items) {
   const container = document.getElementById('location-list');
   container.innerHTML = '';
 
-  items.forEach((item, index) => {
+  // Separate items with and without coordinates
+  const itemsWithCoords = [];
+  const itemsWithoutCoords = [];
+
+  items.forEach(item => {
+    if (item.latitude && item.longitude) {
+      itemsWithCoords.push(item);
+    } else {
+      itemsWithoutCoords.push(item);
+    }
+  });
+
+  // Render items with coordinates
+  itemsWithCoords.forEach((item, index) => {
     const card = document.createElement('div');
     card.className = 'location-card';
 
@@ -79,6 +118,48 @@ function renderLocationCards(items) {
 
     container.appendChild(card);
   });
+
+  // Render items without coordinates in a separate section
+  if (itemsWithoutCoords.length > 0) {
+    const divider = document.createElement('div');
+    divider.style.cssText = 'margin: 24px 0 16px; padding-top: 16px; border-top: 2px dashed rgba(0,0,0,0.1);';
+    divider.innerHTML = `
+      <div style="text-align: center; color: #000000; opacity: 0.7; font-size: 13px; font-weight: 600; margin-bottom: 12px;">
+        📍 Items Without Locations (${itemsWithoutCoords.length})
+      </div>
+      <div style="text-align: center; color: #000000; opacity: 0.6; font-size: 11px; margin-bottom: 16px;">
+        Add locations in the extension to show these on the map
+      </div>
+    `;
+    container.appendChild(divider);
+
+    itemsWithoutCoords.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'location-card';
+      card.style.opacity = '0.6';
+      card.style.cursor = 'default';
+
+      const venue = item.venue_name || item.address || item.event_name || 'Saved Location';
+      const platform = item.platform || '';
+      const author = item.author || '';
+      const eventDate = formatEventDate(item.event_date);
+
+      card.innerHTML = `
+        <div style="display: inline-block; background: rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.2); color: #000000; width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px; font-weight: 700; margin-bottom: 12px;">?</div>
+        <h3>${venue}</h3>
+        ${platform || author ? `
+          <div class="location-details">
+            ${platform ? platform : ''}
+            ${platform && author ? ' • ' : ''}
+            ${author ? (author.startsWith('@') ? author : '@' + author) : ''}
+          </div>
+        ` : ''}
+        ${eventDate ? `<div class="location-date">${eventDate}</div>` : ''}
+      `;
+
+      container.appendChild(card);
+    });
+  }
 }
 
 function initializeRadarMap(items) {
