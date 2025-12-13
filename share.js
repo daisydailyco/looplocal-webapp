@@ -235,11 +235,18 @@ function initializeRadarMap(items) {
     // Auto-fit map to show all markers
     if (markers.length > 0) {
       console.log(`🗺️ Fitting map to ${markers.length} markers...`);
-      radarMap.fitToMarkers({
-        padding: { top: 50, bottom: 50, left: 50, right: 50 },
-        maxZoom: 15
-      });
-      console.log('✅ Map fitted successfully');
+
+      // Force map to resize and recalculate
+      radarMap.resize();
+
+      // Small delay to ensure map is fully rendered before fitting
+      setTimeout(() => {
+        radarMap.fitToMarkers({
+          padding: { top: 50, bottom: 50, left: 50, right: 50 },
+          maxZoom: 15
+        });
+        console.log('✅ Map fitted successfully');
+      }, 100);
     } else {
       console.log('No markers to display - items may not have coordinates');
     }
