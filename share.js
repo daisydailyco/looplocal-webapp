@@ -167,16 +167,32 @@ function initializeRadarMap(items) {
   // Initialize Radar
   Radar.initialize(RADAR_API_KEY);
 
-  // Create map - simplified to match working example
+  // Filter items with valid coordinates first
+  const itemsWithCoords = items.filter(item => item.latitude && item.longitude);
+
+  if (itemsWithCoords.length === 0) {
+    console.log('No items with coordinates to display');
+    return;
+  }
+
+  // Calculate initial center from coordinates
+  const avgLat = itemsWithCoords.reduce((sum, item) => sum + item.latitude, 0) / itemsWithCoords.length;
+  const avgLng = itemsWithCoords.reduce((sum, item) => sum + item.longitude, 0) / itemsWithCoords.length;
+
+  // Create map centered on data
   radarMap = Radar.ui.map({
     container: 'radar-map',
     style: 'radar-default-v1',
-    center: [-82.6403, 27.7676], // St. Pete default
-    zoom: 12,
+    center: [avgLng, avgLat],
+    zoom: 13,
   });
 
-  // Wait for map to load before adding markers
+  console.log('🗺️ Map initialized, waiting for load event...');
+
+  // Wait for map to be fully loaded and rendered
   radarMap.on('load', () => {
+    console.log('🗺️ Map loaded, adding markers...');
+
     // Add markers for each location
     items.forEach((item, index) => {
       // Only add marker if we have valid coordinates
@@ -246,25 +262,31 @@ function initializeRadarMap(items) {
 
       console.log('📍 Coordinates for bounds:', coordinates);
 
-      // Small delay to ensure map is fully rendered
+      // Wait for markers to be fully rendered before fitting
       setTimeout(() => {
-        if (coordinates.length === 1) {
-          // Single marker - center on it
-          radarMap.setCenter(coordinates[0]);
-          radarMap.setZoom(14);
-        } else if (coordinates.length > 1) {
-          // Multiple markers - fit bounds
-          const bounds = coordinates.reduce((bounds, coord) => {
-            return bounds.extend(coord);
-          }, new window.maplibregl.LngLatBounds(coordinates[0], coordinates[0]));
+        try {
+          if (coordinates.length === 1) {
+            // Single marker - center on it
+            radarMap.setCenter(coordinates[0]);
+            radarMap.setZoom(14);
+            console.log('✅ Map centered on single marker');
+          } else if (coordinates.length > 1) {
+            // Multiple markers - fit bounds using MapLibre's LngLatBounds
+            const bounds = coordinates.reduce((bounds, coord) => {
+              return bounds.extend(coord);
+            }, new window.maplibregl.LngLatBounds(coordinates[0], coordinates[0]));
 
-          radarMap.fitBounds(bounds, {
-            padding: { top: 50, bottom: 50, left: 50, right: 50 },
-            maxZoom: 15
-          });
+            radarMap.fitBounds(bounds, {
+              padding: { top: 60, bottom: 60, left: 60, right: 60 },
+              maxZoom: 14,
+              duration: 1000 // Smooth animation
+            });
+            console.log('✅ Map bounds fitted to all markers');
+          }
+        } catch (error) {
+          console.error('Error fitting bounds:', error);
         }
-        console.log('✅ Map fitted successfully');
-      }, 100);
+      }, 300);
     } else {
       console.log('No markers to display - items may not have coordinates');
     }
