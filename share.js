@@ -236,15 +236,30 @@ function initializeRadarMap(items) {
     if (markers.length > 0) {
       console.log(`🗺️ Fitting map to ${markers.length} markers...`);
 
-      // Force map to resize and recalculate
-      radarMap.resize();
+      // Calculate bounds manually from items with coordinates
+      const coordinates = items
+        .filter(item => item.latitude && item.longitude)
+        .map(item => [item.longitude, item.latitude]);
 
-      // Small delay to ensure map is fully rendered before fitting
+      console.log('📍 Coordinates for bounds:', coordinates);
+
+      // Small delay to ensure map is fully rendered
       setTimeout(() => {
-        radarMap.fitToMarkers({
-          padding: { top: 50, bottom: 50, left: 50, right: 50 },
-          maxZoom: 15
-        });
+        if (coordinates.length === 1) {
+          // Single marker - center on it
+          radarMap.setCenter(coordinates[0]);
+          radarMap.setZoom(14);
+        } else if (coordinates.length > 1) {
+          // Multiple markers - fit bounds
+          const bounds = coordinates.reduce((bounds, coord) => {
+            return bounds.extend(coord);
+          }, new window.maplibregl.LngLatBounds(coordinates[0], coordinates[0]));
+
+          radarMap.fitBounds(bounds, {
+            padding: { top: 50, bottom: 50, left: 50, right: 50 },
+            maxZoom: 15
+          });
+        }
         console.log('✅ Map fitted successfully');
       }, 100);
     } else {
