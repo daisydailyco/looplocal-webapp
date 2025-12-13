@@ -204,6 +204,49 @@ body {
   height: 100%;
 }
 
+/* Custom Marker Styles (Radar CSS blocked by 403) */
+.maplibregl-marker {
+  width: 30px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.maplibregl-marker::before {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: #42A746;
+  border: 3px solid white;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  top: 0;
+  left: 0;
+}
+
+.maplibregl-marker::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
+  top: 7px;
+  left: 7px;
+  z-index: 1;
+}
+
+.maplibregl-popup {
+  z-index: 1000;
+}
+
+.maplibregl-popup-content {
+  padding: 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
 .location-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
