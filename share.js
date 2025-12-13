@@ -111,7 +111,8 @@ function renderLocationCards(items) {
     // Click to focus on map marker
     card.addEventListener('click', () => {
       if (markers[index]) {
-        radarMap.setCenter(markers[index].getPosition());
+        const markerPos = markers[index].getLngLat();
+        radarMap.setCenter(markerPos);
         radarMap.setZoom(15);
       }
     });
@@ -224,6 +225,7 @@ function initializeRadarMap(items) {
           .setLngLat([item.longitude, item.latitude])
           .addTo(radarMap);
 
+        console.log(`✅ Marker ${markers.length + 1} added to map:`, marker);
         markers.push(marker);
       } else {
         console.log(`Skipping item ${index + 1} - no coordinates`);
@@ -232,10 +234,12 @@ function initializeRadarMap(items) {
 
     // Auto-fit map to show all markers
     if (markers.length > 0) {
+      console.log(`🗺️ Fitting map to ${markers.length} markers...`);
       radarMap.fitToMarkers({
         padding: { top: 50, bottom: 50, left: 50, right: 50 },
         maxZoom: 15
       });
+      console.log('✅ Map fitted successfully');
     } else {
       console.log('No markers to display - items may not have coordinates');
     }
