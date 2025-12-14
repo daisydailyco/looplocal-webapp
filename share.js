@@ -238,7 +238,7 @@ function initializeRadarMap(items) {
 
         popupHTML += '</div>';
 
-        // Create native MapLibre marker using Radar's internal map
+        // Create native MapLibre marker using global maplibregl
         try {
           // Create custom marker element
           const el = document.createElement('div');
@@ -255,13 +255,13 @@ function initializeRadarMap(items) {
           el.style.width = '27px';
           el.style.height = '41px';
 
-          // Use native MapLibre marker constructor
-          const marker = new radarMap.constructor.Marker(el)
+          // Use native MapLibre GL JS marker (loaded globally)
+          const marker = new maplibregl.Marker(el)
             .setLngLat([item.longitude, item.latitude])
             .addTo(radarMap);
 
           // Create native MapLibre popup
-          const popup = new radarMap.constructor.Popup({
+          const popup = new maplibregl.Popup({
             closeButton: true,
             closeOnClick: true,
             maxWidth: '180px',
@@ -300,8 +300,8 @@ function initializeRadarMap(items) {
             radarMap.setZoom(14);
             console.log('✅ Map centered on single marker');
           } else if (coordinates.length > 1) {
-            // Multiple markers - fit bounds using MapLibre's LngLatBounds from the map constructor
-            const LngLatBounds = radarMap.constructor.LngLatBounds;
+            // Multiple markers - fit bounds using MapLibre's LngLatBounds
+            const LngLatBounds = maplibregl.LngLatBounds;
             const bounds = coordinates.reduce((bounds, coord) => {
               return bounds.extend(coord);
             }, new LngLatBounds(coordinates[0], coordinates[0]));
