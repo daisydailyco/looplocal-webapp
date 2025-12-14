@@ -238,14 +238,30 @@ function initializeRadarMap(items) {
 
         popupHTML += '</div>';
 
-        // Create marker and explicitly bind to map
+        // Create native MapLibre marker using Radar's internal map
         try {
-          const marker = Radar.ui.marker({ color: '#42A746' })
+          // Create custom marker element
+          const el = document.createElement('div');
+          el.className = 'custom-marker';
+          el.innerHTML = `
+            <svg width="27" height="41" viewBox="0 0 27 41">
+              <g fill="#42A746">
+                <path d="M27,13.5 C27,19.074644 20.250001,27.000002 14.75,34.500002 C14.016665,35.500004 12.983335,35.500004 12.25,34.500002 C6.7499993,27.000002 0,19.222562 0,13.5 C0,6.0441559 6.0441559,0 13.5,0 C20.955844,0 27,6.0441559 27,13.5 Z"></path>
+              </g>
+              <circle fill="#FFFFFF" cx="13.5" cy="13.5" r="5.5"></circle>
+            </svg>
+          `;
+          el.style.cursor = 'pointer';
+          el.style.width = '27px';
+          el.style.height = '41px';
+
+          // Use native MapLibre marker constructor
+          const marker = new radarMap.constructor.Marker(el)
             .setLngLat([item.longitude, item.latitude])
             .addTo(radarMap);
 
-          // Create popup separately for better control
-          const popup = Radar.ui.popup({
+          // Create native MapLibre popup
+          const popup = new radarMap.constructor.Popup({
             closeButton: true,
             closeOnClick: true,
             maxWidth: '180px',
@@ -254,7 +270,7 @@ function initializeRadarMap(items) {
 
           marker.setPopup(popup);
 
-          console.log(`✅ Marker ${markers.length + 1} added at [${item.longitude}, ${item.latitude}]`);
+          console.log(`✅ Native marker ${markers.length + 1} added at [${item.longitude}, ${item.latitude}]`);
           markers.push(marker);
         } catch (error) {
           console.error(`❌ Error creating marker ${index + 1}:`, error);
@@ -284,10 +300,11 @@ function initializeRadarMap(items) {
             radarMap.setZoom(14);
             console.log('✅ Map centered on single marker');
           } else if (coordinates.length > 1) {
-            // Multiple markers - fit bounds using MapLibre's LngLatBounds
+            // Multiple markers - fit bounds using MapLibre's LngLatBounds from the map constructor
+            const LngLatBounds = radarMap.constructor.LngLatBounds;
             const bounds = coordinates.reduce((bounds, coord) => {
               return bounds.extend(coord);
-            }, new window.maplibregl.LngLatBounds(coordinates[0], coordinates[0]));
+            }, new LngLatBounds(coordinates[0], coordinates[0]));
 
             radarMap.fitBounds(bounds, {
               padding: { top: 60, bottom: 60, left: 60, right: 60 },
