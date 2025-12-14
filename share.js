@@ -1,5 +1,6 @@
 // Configuration
 const BACKEND_URL = 'https://web-production-5630.up.railway.app';
+const RADAR_API_KEY = 'prj_live_pk_8c9d4c6a85d8b9e0aacb1b2f6f7ec0ead4cb799a';
 
 // Get share ID from URL
 const urlParams = new URLSearchParams(window.location.search);
@@ -175,10 +176,10 @@ function initializeRadarMap(items) {
   const avgLat = itemsWithCoords.reduce((sum, item) => sum + item.latitude, 0) / itemsWithCoords.length;
   const avgLng = itemsWithCoords.reduce((sum, item) => sum + item.longitude, 0) / itemsWithCoords.length;
 
-  // Create native MapLibre map (no Radar wrapper)
+  // Create native MapLibre map with Radar tiles
   radarMap = new maplibregl.Map({
     container: 'radar-map',
-    style: 'https://demotiles.maplibre.org/style.json', // Free demo map style
+    style: `https://api.radar.io/maps/styles/radar-default-v1?publishableKey=${RADAR_API_KEY}`,
     center: [avgLng, avgLat],
     zoom: 13,
   });
