@@ -280,44 +280,33 @@ function initializeRadarMap(items) {
       }
     });
 
-    // Auto-fit map to show all markers
+    // Auto-zoom to fit all markers
     if (markers.length > 0) {
-      console.log(`🗺️ Fitting map to ${markers.length} markers...`);
+      console.log(`🗺️ Adjusting map to show ${markers.length} markers...`);
 
-      // Calculate bounds manually from items with coordinates
+      // Calculate zoom level based on marker spread
       const coordinates = items
         .filter(item => item.latitude && item.longitude)
         .map(item => [item.longitude, item.latitude]);
 
-      console.log('📍 Coordinates for bounds:', coordinates);
+      if (coordinates.length > 1) {
+        // Calculate bounds to determine zoom
+        const lngs = coordinates.map(c => c[0]);
+        const lats = coordinates.map(c => c[1]);
+        const lngSpan = Math.max(...lngs) - Math.min(...lngs);
+        const latSpan = Math.max(...lats) - Math.min(...lats);
+        const maxSpan = Math.max(lngSpan, latSpan);
 
-      // Wait for markers to be fully rendered before fitting
-      setTimeout(() => {
-        try {
-          if (coordinates.length === 1) {
-            // Single marker - center on it
-            radarMap.setCenter(coordinates[0]);
-            radarMap.setZoom(14);
-            console.log('✅ Map centered on single marker');
-          } else if (coordinates.length > 1) {
-            // Multiple markers - fit bounds using simple [[lng, lat], [lng, lat]] format
-            // Find min/max coordinates
-            const lngs = coordinates.map(c => c[0]);
-            const lats = coordinates.map(c => c[1]);
-            const sw = [Math.min(...lngs), Math.min(...lats)]; // Southwest corner
-            const ne = [Math.max(...lngs), Math.max(...lats)]; // Northeast corner
+        // Adjust zoom based on span (rough approximation)
+        let zoom = 13;
+        if (maxSpan < 0.01) zoom = 15;
+        else if (maxSpan < 0.05) zoom = 13;
+        else if (maxSpan < 0.1) zoom = 12;
+        else zoom = 11;
 
-            radarMap.fitBounds([sw, ne], {
-              padding: { top: 60, bottom: 60, left: 60, right: 60 },
-              maxZoom: 14,
-              duration: 1000 // Smooth animation
-            });
-            console.log('✅ Map bounds fitted to all markers');
-          }
-        } catch (error) {
-          console.error('Error fitting bounds:', error);
-        }
-      }, 300);
+        radarMap.setZoom(zoom);
+        console.log(`✅ Map zoom set to ${zoom} for span ${maxSpan.toFixed(4)}`);
+      }
     } else {
       console.log('No markers to display - items may not have coordinates');
     }
