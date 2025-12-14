@@ -300,13 +300,14 @@ function initializeRadarMap(items) {
             radarMap.setZoom(14);
             console.log('✅ Map centered on single marker');
           } else if (coordinates.length > 1) {
-            // Multiple markers - fit bounds using MapLibre's LngLatBounds
-            const LngLatBounds = maplibregl.LngLatBounds;
-            const bounds = coordinates.reduce((bounds, coord) => {
-              return bounds.extend(coord);
-            }, new LngLatBounds(coordinates[0], coordinates[0]));
+            // Multiple markers - fit bounds using simple [[lng, lat], [lng, lat]] format
+            // Find min/max coordinates
+            const lngs = coordinates.map(c => c[0]);
+            const lats = coordinates.map(c => c[1]);
+            const sw = [Math.min(...lngs), Math.min(...lats)]; // Southwest corner
+            const ne = [Math.max(...lngs), Math.max(...lats)]; // Northeast corner
 
-            radarMap.fitBounds(bounds, {
+            radarMap.fitBounds([sw, ne], {
               padding: { top: 60, bottom: 60, left: 60, right: 60 },
               maxZoom: 14,
               duration: 1000 // Smooth animation
