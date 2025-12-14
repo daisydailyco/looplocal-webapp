@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shared List - LoopLocal</title>
   <link rel="stylesheet" href="/style.css">
-  <!-- Radar CSS blocked by 403, using custom marker styles in style.css instead -->
-  <script src="https://js.radar.com/v4/radar.min.js"></script>
+  <!-- MapLibre GL CSS -->
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
 </head>
 <body>
   <div class="share-container">
@@ -69,6 +69,11 @@
     </div>
   </div>
 
+  <!-- Load MapLibre GL JS first -->
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+  <!-- Load Radar SDK -->
+  <script src="https://js.radar.com/v4/radar.min.js"></script>
+  <!-- Load our app script last -->
   <script src="/share.js"></script>
 </body>
 </html>
