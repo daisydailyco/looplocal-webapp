@@ -9,6 +9,8 @@ const shareId = urlParams.get('id') || window.location.pathname.split('/').pop()
 // Initialize
 let radarMap = null;
 let markers = [];
+let isEditMode = false;
+let currentItems = [];
 
 async function loadSharedList() {
   try {
@@ -35,6 +37,9 @@ async function loadSharedList() {
       });
     }
 
+    // Store items for reordering
+    currentItems = data.items;
+
     // Hide loading, show content
     document.getElementById('loading').style.display = 'none';
     document.getElementById('content').style.display = 'block';
@@ -43,6 +48,7 @@ async function loadSharedList() {
     renderCategoryHeader(data);
     renderLocationCards(data.items);
     initializeRadarMap(data.items);
+    initializeEditButtons();
 
   } catch (error) {
     console.error('Error loading shared list:', error);
@@ -324,6 +330,138 @@ function formatEventDate(dateString) {
     return date.toLocaleDateString('en-US', options);
   } catch (e) {
     return null;
+  }
+}
+
+// Edit Order functionality
+function initializeEditButtons() {
+  const editBtn = document.getElementById('edit-order-btn');
+  const saveBtn = document.getElementById('save-order-btn');
+  const cancelBtn = document.getElementById('cancel-order-btn');
+
+  editBtn.addEventListener('click', () => {
+    enterEditMode();
+  });
+
+  saveBtn.addEventListener('click', async () => {
+    await saveNewOrder();
+  });
+
+  cancelBtn.addEventListener('click', () => {
+    exitEditMode();
+    renderLocationCards(currentItems); // Re-render original order
+  });
+}
+
+function enterEditMode() {
+  isEditMode = true;
+  document.getElementById('edit-order-btn').style.display = 'none';
+  document.getElementById('save-order-btn').style.display = 'inline-block';
+  document.getElementById('cancel-order-btn').style.display = 'inline-block';
+
+  // Make location cards draggable
+  const cards = document.querySelectorAll('.location-card');
+  cards.forEach((card, index) => {
+    card.draggable = true;
+    card.style.cursor = 'move';
+    card.dataset.index = index;
+
+    card.addEventListener('dragstart', handleDragStart);
+    card.addEventListener('dragover', handleDragOver);
+    card.addEventListener('drop', handleDrop);
+    card.addEventListener('dragend', handleDragEnd);
+  });
+}
+
+function exitEditMode() {
+  isEditMode = false;
+  document.getElementById('edit-order-btn').style.display = 'inline-block';
+  document.getElementById('save-order-btn').style.display = 'none';
+  document.getElementById('cancel-order-btn').style.display = 'none';
+
+  // Remove draggable from cards
+  const cards = document.querySelectorAll('.location-card');
+  cards.forEach(card => {
+    card.draggable = false;
+    card.style.cursor = 'pointer';
+    card.removeEventListener('dragstart', handleDragStart);
+    card.removeEventListener('dragover', handleDragOver);
+    card.removeEventListener('drop', handleDrop);
+    card.removeEventListener('dragend', handleDragEnd);
+  });
+}
+
+let draggedCard = null;
+
+function handleDragStart(e) {
+  draggedCard = this;
+  this.style.opacity = '0.5';
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragOver(e) {
+  if (e.preventDefault) {
+    e.preventDefault();
+  }
+  e.dataTransfer.dropEffect = 'move';
+  return false;
+}
+
+function handleDrop(e) {
+  if (e.stopPropagation) {
+    e.stopPropagation();
+  }
+
+  if (draggedCard !== this) {
+    const container = document.getElementById('location-list');
+    const allCards = Array.from(container.querySelectorAll('.location-card'));
+    const draggedIndex = allCards.indexOf(draggedCard);
+    const targetIndex = allCards.indexOf(this);
+
+    // Reorder in DOM
+    if (draggedIndex < targetIndex) {
+      this.parentNode.insertBefore(draggedCard, this.nextSibling);
+    } else {
+      this.parentNode.insertBefore(draggedCard, this);
+    }
+
+    // Reorder items array (only items with coordinates)
+    const itemsWithCoords = currentItems.filter(item => item.latitude && item.longitude);
+    const [movedItem] = itemsWithCoords.splice(draggedIndex, 1);
+    itemsWithCoords.splice(targetIndex, 0, movedItem);
+
+    // Update currentItems with new order (merge back with items without coords)
+    const itemsWithoutCoords = currentItems.filter(item => !item.latitude || !item.longitude);
+    currentItems = [...itemsWithCoords, ...itemsWithoutCoords];
+  }
+
+  return false;
+}
+
+function handleDragEnd(e) {
+  this.style.opacity = '1';
+}
+
+async function saveNewOrder() {
+  try {
+    // Send new order to backend
+    const response = await fetch(`${BACKEND_URL}/api/share/${shareId}/reorder`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ items: currentItems })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save order');
+    }
+
+    exitEditMode();
+    alert('Order saved successfully!');
+  } catch (error) {
+    console.error('Error saving order:', error);
+    alert('Failed to save order. Please try again.');
   }
 }
 
