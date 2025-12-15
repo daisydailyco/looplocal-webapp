@@ -356,8 +356,7 @@ function initializeEditButtons() {
 function enterEditMode() {
   isEditMode = true;
   document.getElementById('edit-order-btn').style.display = 'none';
-  document.getElementById('save-order-btn').style.display = 'inline-block';
-  document.getElementById('cancel-order-btn').style.display = 'inline-block';
+  document.getElementById('edit-mode-controls').style.display = 'block';
 
   // Make location cards draggable
   const cards = document.querySelectorAll('.location-card');
@@ -376,8 +375,7 @@ function enterEditMode() {
 function exitEditMode() {
   isEditMode = false;
   document.getElementById('edit-order-btn').style.display = 'inline-block';
-  document.getElementById('save-order-btn').style.display = 'none';
-  document.getElementById('cancel-order-btn').style.display = 'none';
+  document.getElementById('edit-mode-controls').style.display = 'none';
 
   // Remove draggable from cards
   const cards = document.querySelectorAll('.location-card');
@@ -433,6 +431,15 @@ function handleDrop(e) {
     // Update currentItems with new order (merge back with items without coords)
     const itemsWithoutCoords = currentItems.filter(item => !item.latitude || !item.longitude);
     currentItems = [...itemsWithCoords, ...itemsWithoutCoords];
+
+    // Update numbers on all cards
+    const updatedCards = Array.from(container.querySelectorAll('.location-card'));
+    updatedCards.forEach((card, index) => {
+      const numberElement = card.querySelector('.location-number');
+      if (numberElement) {
+        numberElement.textContent = index + 1;
+      }
+    });
   }
 
   return false;
@@ -458,6 +465,10 @@ async function saveNewOrder() {
     }
 
     exitEditMode();
+    // Re-render cards with new order and updated numbers
+    renderLocationCards(currentItems);
+    // Re-initialize edit buttons on the new cards
+    initializeEditButtons();
     alert('Order saved successfully!');
   } catch (error) {
     console.error('Error saving order:', error);

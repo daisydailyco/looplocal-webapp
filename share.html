@@ -50,15 +50,18 @@
 
       <!-- Edit Order Button -->
       <div style="text-align: center; margin: 30px 0 20px;">
-        <button id="edit-order-btn" class="action-button" style="max-width: 200px; margin: 0 auto;">
-          ✏️ Edit Order
+        <button id="edit-order-btn" class="edit-button">
+          Edit Order
         </button>
-        <button id="save-order-btn" class="action-button" style="max-width: 200px; margin: 0 auto; display: none; background: #42A746; color: white;">
-          ✓ Save Order
-        </button>
-        <button id="cancel-order-btn" class="action-button" style="max-width: 200px; margin: 0 auto 0 10px; display: none;">
-          Cancel
-        </button>
+        <div id="edit-mode-controls" style="display: none;">
+          <p style="font-size: 14px; opacity: 0.8; margin-bottom: 12px;">Drag and drop to reorder</p>
+          <button id="save-order-btn" class="edit-button" style="background: #42A746; color: white;">
+            Save Order
+          </button>
+          <button id="cancel-order-btn" class="edit-button" style="margin-left: 10px;">
+            Cancel
+          </button>
+        </div>
       </div>
 
       <!-- Location Cards -->
@@ -68,7 +71,7 @@
 
       <!-- CTA Section -->
       <div class="cta-section">
-        <h2>Create Your Own Lists</h2>
+        <h2>Your Loop. Your Local.</h2>
         <p>Save and organize local spots from Instagram</p>
         <a href="https://www.looplocal.app" class="cta-button" target="_blank" style="box-shadow: 0 8px 16px rgba(0,0,0,0.3); border: 2px solid rgba(0,0,0,0.15);">
           Create Your Own List

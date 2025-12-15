@@ -372,6 +372,25 @@ body {
   text-decoration: underline;
 }
 
+/* Edit Order Button Styles */
+.edit-button {
+  background: white;
+  border: none;
+  color: #000000;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.edit-button:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transform: translateY(-2px);
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .hero-section h1 {
