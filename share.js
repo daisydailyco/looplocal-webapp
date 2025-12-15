@@ -108,12 +108,14 @@ function renderLocationCards(items) {
       ${eventDate ? `<div class="location-date">${eventDate}</div>` : ''}
     `;
 
-    // Click to focus on map marker
+    // Click to focus on map marker and show popup
     card.addEventListener('click', () => {
       if (markers[index]) {
         const markerPos = markers[index].getLngLat();
         radarMap.setCenter(markerPos);
         radarMap.setZoom(15);
+        // Open the popup
+        markers[index].togglePopup();
       }
     });
 
