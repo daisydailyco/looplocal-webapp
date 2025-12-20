@@ -69,6 +69,16 @@
     </div>
   </div>
 
+  <!-- Auth Token Detection - Redirect to callback page if auth tokens present -->
+  <script>
+    // Check if URL contains authentication tokens (from email confirmation)
+    if (window.location.hash.includes('access_token')) {
+      console.log('Auth tokens detected, redirecting to callback page...');
+      // Redirect to callback page with hash preserved
+      window.location.href = '/auth-callback.html' + window.location.hash;
+    }
+  </script>
+
   <!-- Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator) {
