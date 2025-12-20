@@ -410,8 +410,14 @@
         const result = await signup(email, password);
 
         if (result.success) {
-          // Redirect to dashboard
-          window.location.href = '/dashboard.html';
+          if (result.needsEmailConfirmation) {
+            // Show success message about email confirmation
+            showError('✓ Account created! Please check your email to confirm your account.', 'success');
+            resetForm();
+          } else {
+            // Has session, redirect to dashboard
+            window.location.href = '/dashboard.html';
+          }
         } else {
           showError(result.error || 'Signup failed. Please try again.');
           resetForm();
@@ -423,9 +429,16 @@
       }
     });
 
-    function showError(message) {
+    function showError(message, type = 'error') {
       errorMessage.textContent = message;
       errorMessage.classList.add('show');
+
+      // Update styling based on type
+      if (type === 'success') {
+        errorMessage.style.background = 'rgba(66, 167, 70, 0.9)';
+      } else {
+        errorMessage.style.background = 'rgba(255,59,48,0.9)';
+      }
     }
 
     function resetForm() {

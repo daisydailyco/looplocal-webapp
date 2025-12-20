@@ -20,12 +20,19 @@ async function signup(email, password) {
     const data = await response.json();
     console.log('Signup response:', JSON.stringify(data, null, 2)); // Debug log - show full structure
 
-    if (data.success && data.session) {
-      saveSession(data.session);
+    if (data.success && data.user) {
+      // Save session if available (will be null if email confirmation required)
+      if (data.session) {
+        saveSession(data.session);
+      }
       saveUser(data.user);
-      return { success: true, user: data.user };
+      return {
+        success: true,
+        user: data.user,
+        needsEmailConfirmation: !data.session // Flag if email confirmation is needed
+      };
     } else {
-      console.error('Signup failed - data.success:', data.success, 'data.session:', data.session, 'data.error:', data.error); // Debug log
+      console.error('Signup failed - data.success:', data.success, 'data.error:', data.error); // Debug log
       return { success: false, error: data.error || 'Signup failed' };
     }
   } catch (error) {
