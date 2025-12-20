@@ -326,13 +326,15 @@
       const eyeClosed = button.querySelector('.eye-closed');
 
       if (input.type === 'password') {
+        // Show password text → show OPEN eye
         input.type = 'text';
-        eyeOpen.style.display = 'none';
-        eyeClosed.style.display = 'block';
-      } else {
-        input.type = 'password';
         eyeOpen.style.display = 'block';
         eyeClosed.style.display = 'none';
+      } else {
+        // Hide password text → show CLOSED eye
+        input.type = 'password';
+        eyeOpen.style.display = 'none';
+        eyeClosed.style.display = 'block';
       }
     }
 
