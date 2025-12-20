@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - LoopLocal</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#e7ac6d">
+
+  <!-- iOS Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="LoopLocal">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #e7ac6d 0%, #db3f1d 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+      color: white;
+    }
+
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 24px 30px;
+      backdrop-filter: blur(10px);
+    }
+
+    .header-left {
+      flex: 1;
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+
+    .welcome-text {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .user-email {
+      font-weight: 600;
+      opacity: 1;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 12px;
+    }
+
+    .logout-button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      background: rgba(255,255,255,0.9);
+      color: #000;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .logout-button:hover {
+      background: rgba(255,255,255,1);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .dashboard-content {
+      background: rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 60px 40px;
+      backdrop-filter: blur(10px);
+      text-align: center;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dashboard-content h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-content p {
+      font-size: 20px;
+      opacity: 0.9;
+      margin-bottom: 40px;
+    }
+
+    .placeholder-icon {
+      font-size: 80px;
+      margin-bottom: 30px;
+      opacity: 0.8;
+    }
+
+    .coming-soon {
+      background: rgba(255,255,255,0.2);
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 100px 20px;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top: 4px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+      }
+
+      .header-left {
+        width: 100%;
+      }
+
+      .header-right {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .dashboard-content h1 {
+        font-size: 36px;
+      }
+
+      .dashboard-content p {
+        font-size: 18px;
+      }
+
+      .placeholder-icon {
+        font-size: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading State -->
+  <div id="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- Dashboard Content (Hidden Until Loaded) -->
+  <div id="dashboard" class="dashboard-container" style="display: none;">
+    <div class="dashboard-header">
+      <div class="header-left">
+        <div class="logo">LoopLocal</div>
+        <div class="welcome-text">
+          Welcome, <span class="user-email" id="user-email">user@example.com</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <button id="logout-button" class="logout-button">Log Out</button>
+      </div>
+    </div>
+
+    <div class="dashboard-content">
+      <div class="placeholder-icon">🚧</div>
+      <h1>Dashboard Coming Soon!</h1>
+      <p>We're working hard to bring you an amazing experience.</p>
+      <div class="coming-soon">Stay tuned for updates</div>
+    </div>
+  </div>
+
+  <script src="/auth.js"></script>
+  <script>
+    const loadingDiv = document.getElementById('loading');
+    const dashboardDiv = document.getElementById('dashboard');
+    const userEmailSpan = document.getElementById('user-email');
+    const logoutButton = document.getElementById('logout-button');
+
+    // Verify user is logged in
+    async function init() {
+      const verification = await verifySession();
+
+      if (!verification.valid) {
+        // Not logged in, redirect to login page
+        window.location.href = '/login.html';
+        return;
+      }
+
+      // User is logged in, show dashboard
+      const user = verification.user;
+      userEmailSpan.textContent = user.email || 'User';
+
+      loadingDiv.style.display = 'none';
+      dashboardDiv.style.display = 'block';
+    }
+
+    // Logout handler
+    logoutButton.addEventListener('click', async () => {
+      logoutButton.disabled = true;
+      logoutButton.textContent = 'Logging out...';
+
+      await logout();
+      window.location.href = '/index.html';
+    });
+
+    // Initialize on page load
+    init();
+  </script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then((registration) => {
+            console.log('ServiceWorker registered:', registration.scope);
+          })
+          .catch((error) => {
+            console.log('ServiceWorker registration failed:', error);
+          });
+      });
+    }
+  </script>
+</body>
+</html>
