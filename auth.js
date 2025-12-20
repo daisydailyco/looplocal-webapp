@@ -18,12 +18,14 @@ async function signup(email, password) {
     });
 
     const data = await response.json();
+    console.log('Signup response:', data); // Debug log
 
     if (data.success && data.session) {
       saveSession(data.session);
       saveUser(data.user);
       return { success: true, user: data.user };
     } else {
+      console.error('Signup failed:', data.error); // Debug log
       return { success: false, error: data.error || 'Signup failed' };
     }
   } catch (error) {
