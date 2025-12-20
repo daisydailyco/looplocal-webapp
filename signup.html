@@ -23,10 +23,10 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #e7ac6d 0%, #db3f1d 100%);
+      background: linear-gradient(135deg, #f0f0f0 0%, #f9f8e5 100%);
       min-height: 100vh;
       padding: 40px 20px;
-      color: white;
+      color: #000000;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -47,20 +47,21 @@
       font-weight: 700;
       margin-bottom: 8px;
       letter-spacing: 2px;
+      color: #000000;
     }
 
     .tagline {
       font-size: 14px;
-      opacity: 0.9;
+      opacity: 0.8;
       letter-spacing: 1px;
+      color: #000000;
     }
 
     .auth-card {
-      background: rgba(255,255,255,0.1);
+      background: white;
       border-radius: 16px;
       padding: 40px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
     .auth-card h1 {
@@ -68,10 +69,12 @@
       font-weight: 700;
       margin-bottom: 24px;
       text-align: center;
+      color: #000000;
     }
 
     .form-group {
       margin-bottom: 20px;
+      position: relative;
     }
 
     .form-group label {
@@ -79,24 +82,52 @@
       font-size: 14px;
       font-weight: 600;
       margin-bottom: 8px;
-      opacity: 0.9;
+      color: #000000;
     }
 
     .form-group input {
       width: 100%;
       padding: 14px 16px;
-      border: none;
+      border: 1px solid #e0e0e0;
       border-radius: 8px;
       font-size: 16px;
-      background: rgba(255,255,255,0.9);
+      background: #f9f9f9;
       color: #000;
       transition: all 0.2s;
     }
 
     .form-group input:focus {
       outline: none;
-      background: rgba(255,255,255,1);
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+      background: white;
+      border-color: #000000;
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
+    }
+
+    .form-group input.error {
+      border-color: #ff3b30;
+      background: #fff5f5;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+      padding: 4px;
+      color: #666;
+      transition: color 0.2s;
+    }
+
+    .password-toggle:hover {
+      color: #000;
     }
 
     .submit-button {
@@ -106,17 +137,17 @@
       border-radius: 8px;
       font-size: 16px;
       font-weight: 600;
-      background: rgba(255,255,255,0.9);
-      color: #000;
+      background: #000000;
+      color: white;
       cursor: pointer;
       transition: all 0.2s;
       margin-bottom: 20px;
     }
 
-    .submit-button:hover {
-      background: rgba(255,255,255,1);
+    .submit-button:hover:not(:disabled) {
+      background: #333333;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
     .submit-button:disabled {
@@ -162,25 +193,36 @@
     .auth-links {
       text-align: center;
       margin-top: 24px;
+      color: #000000;
     }
 
     .auth-links a {
-      color: white;
+      color: #000000;
       text-decoration: none;
       font-size: 14px;
-      opacity: 0.9;
+      font-weight: 600;
       transition: opacity 0.2s;
     }
 
     .auth-links a:hover {
-      opacity: 1;
       text-decoration: underline;
     }
 
     .password-hint {
       font-size: 12px;
-      opacity: 0.8;
+      color: #666;
       margin-top: 4px;
+    }
+
+    .password-error {
+      font-size: 12px;
+      color: #ff3b30;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .password-error.show {
+      display: block;
     }
 
     @media (max-width: 768px) {
@@ -218,13 +260,20 @@
 
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" name="password" required autocomplete="new-password" minlength="6">
+          <div class="password-wrapper">
+            <input type="password" id="password" name="password" required autocomplete="new-password" minlength="6" style="padding-right: 45px;">
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('password', this)">👁️</button>
+          </div>
           <div class="password-hint">At least 6 characters</div>
         </div>
 
         <div class="form-group">
           <label for="confirm-password">Confirm Password</label>
-          <input type="password" id="confirm-password" name="confirm-password" required autocomplete="new-password">
+          <div class="password-wrapper">
+            <input type="password" id="confirm-password" name="confirm-password" required autocomplete="new-password" style="padding-right: 45px;">
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('confirm-password', this)">👁️</button>
+          </div>
+          <div id="password-match-error" class="password-error">Passwords do not match</div>
         </div>
 
         <div id="loading-spinner" class="loading-spinner"></div>
@@ -249,11 +298,46 @@
     const submitButton = document.getElementById('submit-button');
     const errorMessage = document.getElementById('error-message');
     const loadingSpinner = document.getElementById('loading-spinner');
+    const passwordMatchError = document.getElementById('password-match-error');
 
     // Check if already logged in
     if (isLoggedIn()) {
       redirectToDashboard();
     }
+
+    // Toggle password visibility
+    function togglePasswordVisibility(inputId, button) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        button.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        button.textContent = '👁️';
+      }
+    }
+
+    // Real-time password match validation
+    function validatePasswordMatch() {
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      if (confirmPassword.length > 0 && password !== confirmPassword) {
+        confirmPasswordInput.classList.add('error');
+        passwordMatchError.classList.add('show');
+        submitButton.disabled = true;
+        return false;
+      } else {
+        confirmPasswordInput.classList.remove('error');
+        passwordMatchError.classList.remove('show');
+        submitButton.disabled = false;
+        return true;
+      }
+    }
+
+    // Add event listeners for real-time validation
+    passwordInput.addEventListener('input', validatePasswordMatch);
+    confirmPasswordInput.addEventListener('input', validatePasswordMatch);
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
