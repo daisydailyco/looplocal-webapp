@@ -1,11 +1,14 @@
 // LoopLocal Service Worker
-const CACHE_NAME = 'looplocal-v3';
+const CACHE_NAME = 'looplocal-v4';
 const urlsToCache = [
   '/',
   '/style.css',
   '/share.html',
   '/share.js',
-  '/manifest.json'
+  '/manifest.json',
+  '/dashboard.html',
+  '/dashboard.js',
+  '/auth.js'
 ];
 
 // Install event - cache assets
