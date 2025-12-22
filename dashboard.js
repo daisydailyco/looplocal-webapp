@@ -502,29 +502,29 @@ async function parseWithAI() {
     const data = await response.json();
 
     // Fill form with AI-extracted data
-    if (data.event_name) {
-      document.getElementById('add-event-name').value = data.event_name;
+    // Name field: prioritize venue_name, fallback to event_name
+    const name = data.venue_name || data.event_name || '';
+    if (name) {
+      document.getElementById('add-name').value = name;
     }
-    if (data.venue_name) {
-      document.getElementById('add-venue-name').value = data.venue_name;
-    }
+
+    // Location field
     if (data.address) {
-      document.getElementById('add-address').value = data.address;
+      document.getElementById('add-location').value = data.address;
     }
+
+    // Date and time
     if (data.event_date) {
       document.getElementById('add-date').value = data.event_date;
     }
     if (data.start_time) {
       document.getElementById('add-time').value = data.start_time;
     }
+
+    // Category
     if (data.event_type) {
       document.getElementById('add-category').value = data.event_type;
     }
-    if (data.suggested_tags && data.suggested_tags.length > 0) {
-      document.getElementById('add-tags').value = data.suggested_tags.join(', ');
-    }
-
-    document.getElementById('add-platform').value = platform;
 
     alert('AI analysis complete! Review and edit the fields as needed.');
 
@@ -551,19 +551,17 @@ async function handleAddSave(e) {
 
     // Get form data
     const url = document.getElementById('add-url').value.trim();
-    const eventName = document.getElementById('add-event-name').value.trim();
-    const venueName = document.getElementById('add-venue-name').value.trim();
-    const address = document.getElementById('add-address').value.trim();
+    const name = document.getElementById('add-name').value.trim();
+    const location = document.getElementById('add-location').value.trim();
     const date = document.getElementById('add-date').value;
     const time = document.getElementById('add-time').value;
     const category = document.getElementById('add-category').value;
-    const tagsStr = document.getElementById('add-tags').value.trim();
-    const platform = document.getElementById('add-platform').value;
-    const content = document.getElementById('add-content').value.trim();
-    const author = document.getElementById('add-author').value.trim();
 
-    // Parse tags
-    const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(t => t) : [];
+    // Auto-detect platform from URL
+    let platform = 'instagram';
+    if (url.includes('tiktok.com')) {
+      platform = 'tiktok';
+    }
 
     // Call backend POST /v1/user/saves
     const response = await fetch(`${API_BASE}/v1/user/saves`, {
@@ -575,9 +573,9 @@ async function handleAddSave(e) {
       body: JSON.stringify({
         platform: platform,
         url: url,
-        content: content || eventName,
+        content: name,
         images: [],
-        author: author || 'unknown',
+        author: 'unknown',
         category: category || null
       })
     });
@@ -592,16 +590,16 @@ async function handleAddSave(e) {
       throw new Error('Save failed');
     }
 
-    // Manually update the item with user-provided data (backend may have AI data)
-    // We should call PATCH to update with user's manual edits
-    if (eventName || venueName || address || date || time || tags.length > 0) {
+    // Update the item with user-provided data
+    if (name || location || date || time || category) {
       const updateData = {};
-      if (eventName) updateData.event_name = eventName;
-      if (venueName) updateData.venue_name = venueName;
-      if (address) updateData.address = address;
+      if (name) {
+        updateData.event_name = name;
+        updateData.venue_name = name;
+      }
+      if (location) updateData.address = location;
       if (date) updateData.event_date = date;
       if (time) updateData.start_time = time;
-      if (tags.length > 0) updateData.tags = tags;
       if (category) updateData.category = category;
 
       await fetch(`${API_BASE}/v1/user/saves/${data.item.id}`, {
