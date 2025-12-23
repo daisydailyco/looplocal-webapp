@@ -7,6 +7,8 @@ let filteredSaves = [];
 let currentUser = null;
 let map = null;
 let mapInitialized = false;
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
 
 // DOM elements
 const loadingDiv = document.getElementById('loading');
@@ -36,8 +38,6 @@ const addModal = document.getElementById('add-modal');
 const editModal = document.getElementById('edit-modal');
 const addForm = document.getElementById('add-form');
 const editForm = document.getElementById('edit-form');
-const parseBtn = document.getElementById('parse-btn');
-const aiProcessingDiv = document.getElementById('ai-processing');
 
 // Buttons
 const addSaveBtn = document.getElementById('add-save-btn');
@@ -124,9 +124,6 @@ function initEventListeners() {
   categoryFilter.addEventListener('change', applyFilters);
   tagSearch.addEventListener('input', applyFilters);
 
-  // Parse button
-  parseBtn.addEventListener('click', parseWithAI);
-
   // Add form submission
   addForm.addEventListener('submit', handleAddSave);
 
@@ -164,6 +161,9 @@ function switchTab(tabName) {
   } else if (tabName === 'map') {
     document.getElementById('map-tab').classList.add('active');
     initMap();
+  } else if (tabName === 'calendar') {
+    document.getElementById('calendar-tab').classList.add('active');
+    renderCalendar();
   } else if (tabName === 'categories') {
     document.getElementById('categories-tab').classList.add('active');
     renderCategories();
@@ -318,7 +318,13 @@ function initMap() {
   );
 
   if (savesWithCoords.length === 0) {
-    mapDiv.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666;"><p>No saves with location data yet</p></div>';
+    mapDiv.innerHTML = `
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 40px;">
+        <div style="font-size: 64px; margin-bottom: 20px;">🗺️</div>
+        <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 12px; color: #000;">No maps yet!</h2>
+        <p style="font-size: 16px; color: #666;">Click "Add Save" to get started</p>
+      </div>
+    `;
     return;
   }
 
@@ -445,96 +451,156 @@ function renderCategories() {
   });
 }
 
+// Render calendar
+function renderCalendar() {
+  const calendarView = document.getElementById('calendar-view');
+  const calendarEmpty = document.getElementById('calendar-empty');
+
+  // Get saves with dates
+  const savesWithDates = allSaves.filter(save => save.event_date);
+
+  if (savesWithDates.length === 0) {
+    calendarView.style.display = 'none';
+    calendarEmpty.style.display = 'block';
+    return;
+  }
+
+  calendarView.style.display = 'block';
+  calendarEmpty.style.display = 'none';
+
+  // Create calendar header
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'];
+
+  const firstDay = new Date(currentYear, currentMonth, 1);
+  const lastDay = new Date(currentYear, currentMonth + 1, 0);
+  const prevLastDay = new Date(currentYear, currentMonth, 0);
+  const firstDayIndex = firstDay.getDay();
+  const lastDateOfMonth = lastDay.getDate();
+  const prevLastDate = prevLastDay.getDate();
+
+  // Group saves by date
+  const savesByDate = {};
+  savesWithDates.forEach(save => {
+    const dateKey = save.event_date.split('T')[0]; // Get YYYY-MM-DD
+    if (!savesByDate[dateKey]) {
+      savesByDate[dateKey] = [];
+    }
+    savesByDate[dateKey].push(save);
+  });
+
+  let calendarHTML = `
+    <div class="calendar-header">
+      <button onclick="changeMonth(-1)" style="background: #f5f5f5; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600;">‹ Prev</button>
+      <h2 style="margin: 0; font-size: 20px;">${monthNames[currentMonth]} ${currentYear}</h2>
+      <button onclick="changeMonth(1)" style="background: #f5f5f5; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600;">Next ›</button>
+    </div>
+
+    <div class="calendar-grid">
+      <div style="text-align: center; font-weight: 700; padding: 8px; color: #666;">Sun</div>
+      <div style="text-align: center; font-weight: 700; padding: 8px; color: #666;">Mon</div>
+      <div style="text-align: center; font-weight: 700; padding: 8px; color: #666;">Tue</div>
+      <div style="text-align: center; font-weight: 700; padding: 8px; color: #666;">Wed</div>
+      <div style="text-align: center; font-weight: 700; padding: 8px; color: #666;">Thu</div>
+      <div style="text-align: center; font-weight: 700; padding: 8px; color: #666;">Fri</div>
+      <div style="text-align: center; font-weight: 700; padding: 8px; color: #666;">Sat</div>
+  `;
+
+  // Add previous month's trailing days
+  for (let i = firstDayIndex; i > 0; i--) {
+    calendarHTML += `
+      <div class="calendar-day" style="opacity: 0.3;">
+        <div style="font-weight: 600;">${prevLastDate - i + 1}</div>
+      </div>
+    `;
+  }
+
+  // Add current month's days
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+
+  for (let day = 1; day <= lastDateOfMonth; day++) {
+    const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const isToday = dateStr === todayStr;
+    const hasSaves = savesByDate[dateStr];
+
+    calendarHTML += `
+      <div class="calendar-day ${isToday ? 'today' : ''}" ${hasSaves ? `onclick="showSavesForDate('${dateStr}')"` : ''}>
+        <div style="font-weight: 600;">${day}</div>
+        ${hasSaves ? `<div class="calendar-day-dot"></div>` : ''}
+        ${hasSaves ? `<div style="font-size: 11px; color: #666; margin-top: 4px;">${hasSaves.length} save${hasSaves.length > 1 ? 's' : ''}</div>` : ''}
+      </div>
+    `;
+  }
+
+  // Add next month's leading days
+  const remainingDays = 7 - ((firstDayIndex + lastDateOfMonth) % 7);
+  if (remainingDays < 7) {
+    for (let i = 1; i <= remainingDays; i++) {
+      calendarHTML += `
+        <div class="calendar-day" style="opacity: 0.3;">
+          <div style="font-weight: 600;">${i}</div>
+        </div>
+      `;
+    }
+  }
+
+  calendarHTML += '</div>';
+  calendarView.innerHTML = calendarHTML;
+}
+
+// Change calendar month
+function changeMonth(direction) {
+  currentMonth += direction;
+
+  if (currentMonth > 11) {
+    currentMonth = 0;
+    currentYear++;
+  } else if (currentMonth < 0) {
+    currentMonth = 11;
+    currentYear--;
+  }
+
+  renderCalendar();
+}
+
+// Show saves for a specific date
+function showSavesForDate(dateStr) {
+  const savesForDate = allSaves.filter(save =>
+    save.event_date && save.event_date.startsWith(dateStr)
+  );
+
+  if (savesForDate.length === 0) return;
+
+  // Format date nicely
+  const date = new Date(dateStr + 'T00:00:00');
+  const dateFormatted = date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  let message = `Saves for ${dateFormatted}:\n\n`;
+  savesForDate.forEach((save, index) => {
+    message += `${index + 1}. ${save.event_name || save.venue_name || 'Untitled'}\n`;
+    if (save.address) message += `   📍 ${save.address}\n`;
+    if (save.start_time) message += `   🕐 ${save.start_time}\n`;
+    message += '\n';
+  });
+
+  alert(message);
+}
+
 // Open add modal
 function openAddModal() {
   addForm.reset();
-  aiProcessingDiv.style.display = 'none';
   addModal.classList.add('active');
 }
 
 // Close add modal
 function closeAddModal() {
   addModal.classList.remove('active');
-}
-
-// Parse with AI
-async function parseWithAI() {
-  const url = document.getElementById('add-url').value.trim();
-
-  if (!url) {
-    alert('Please enter a URL first');
-    return;
-  }
-
-  parseBtn.disabled = true;
-  aiProcessingDiv.style.display = 'block';
-
-  try {
-    const session = getSession();
-    if (!session) throw new Error('No session found');
-
-    // Determine platform
-    let platform = 'instagram';
-    if (url.includes('tiktok.com')) {
-      platform = 'tiktok';
-    }
-
-    // Call backend analyze endpoint (this doesn't save, just analyzes)
-    const response = await fetch(`${API_BASE}/v1/analyze`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`
-      },
-      body: JSON.stringify({
-        platform: platform,
-        url: url,
-        content: '',
-        images: [],
-        author: ''
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error('AI analysis failed');
-    }
-
-    const data = await response.json();
-
-    // Fill form with AI-extracted data
-    // Name field: prioritize venue_name, fallback to event_name
-    const name = data.venue_name || data.event_name || '';
-    if (name) {
-      document.getElementById('add-name').value = name;
-    }
-
-    // Location field
-    if (data.address) {
-      document.getElementById('add-location').value = data.address;
-    }
-
-    // Date and time
-    if (data.event_date) {
-      document.getElementById('add-date').value = data.event_date;
-    }
-    if (data.start_time) {
-      document.getElementById('add-time').value = data.start_time;
-    }
-
-    // Category
-    if (data.event_type) {
-      document.getElementById('add-category').value = data.event_type;
-    }
-
-    alert('AI analysis complete! Review and edit the fields as needed.');
-
-  } catch (error) {
-    console.error('AI parsing error:', error);
-    alert('AI analysis failed. Please fill in the fields manually.');
-  } finally {
-    parseBtn.disabled = false;
-    aiProcessingDiv.style.display = 'none';
-  }
 }
 
 // Handle add save
@@ -768,6 +834,8 @@ window.editSave = editSave;
 window.deleteSave = deleteSave;
 window.closeAddModal = closeAddModal;
 window.closeEditModal = closeEditModal;
+window.changeMonth = changeMonth;
+window.showSavesForDate = showSavesForDate;
 
 // Initialize on page load
 init();

@@ -1,5 +1,5 @@
 // LoopLocal Service Worker
-const CACHE_NAME = 'looplocal-v5';
+const CACHE_NAME = 'looplocal-v6';
 const urlsToCache = [
   '/',
   '/style.css',

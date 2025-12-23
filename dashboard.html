@@ -380,6 +380,104 @@
       color: #666;
     }
 
+    /* Calendar View */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .calendar-header {
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .calendar-nav {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .calendar-nav button {
+      padding: 8px 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .calendar-nav button:hover {
+      background: #f0f0f0;
+    }
+
+    .calendar-month-year {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .calendar-day-header {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #666;
+      padding: 8px;
+      text-transform: uppercase;
+    }
+
+    .calendar-day {
+      background: white;
+      border-radius: 8px;
+      padding: 8px;
+      min-height: 80px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .calendar-day:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .calendar-day.other-month {
+      opacity: 0.3;
+    }
+
+    .calendar-day.today {
+      border: 2px solid #000000;
+    }
+
+    .calendar-day-number {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .calendar-day-saves {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .calendar-day-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #42A746;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+    }
+
     /* Modal */
     .modal {
       display: none;
@@ -665,6 +763,7 @@
       <div class="tabs">
         <button class="tab active" data-tab="saves">My Saves</button>
         <button class="tab" data-tab="map">Map View</button>
+        <button class="tab" data-tab="calendar">Calendar</button>
         <button class="tab" data-tab="categories">Categories</button>
       </div>
 
@@ -713,6 +812,20 @@
         </div>
       </div>
 
+      <!-- Calendar Tab -->
+      <div id="calendar-tab" class="tab-content">
+        <div id="calendar-view">
+          <!-- Calendar will be rendered here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="calendar-empty" class="empty-state" style="display: none;">
+          <div class="empty-state-icon">📅</div>
+          <h2>No dates yet!</h2>
+          <p>Add saves with dates to see your calendar</p>
+        </div>
+      </div>
+
       <!-- Categories Tab -->
       <div id="categories-tab" class="tab-content">
         <div id="categories-grid" class="categories-grid">
@@ -741,13 +854,6 @@
         <div class="form-group">
           <label>Instagram/TikTok URL *</label>
           <input type="url" id="add-url" required placeholder="https://instagram.com/p/...">
-        </div>
-
-        <button type="button" id="parse-btn" class="parse-btn">🤖 Parse with AI</button>
-
-        <div id="ai-processing" class="ai-processing" style="display: none;">
-          <div class="loading-spinner"></div>
-          <p>AI is analyzing the post...</p>
         </div>
 
         <div class="form-group">
