@@ -408,9 +408,27 @@ class LoopLocalPopup {
     return `
       <div class="recent-saves">
         ${canShare ? `
-          <!-- Category Name Centered -->
-          <div style="text-align: center; font-size: 16px; font-weight: 600; margin-bottom: 12px;">
-            ${sectionTitle}
+          <!-- Category Title with Dropdown -->
+          <div style="text-align: center; margin-bottom: 12px; position: relative;">
+            <select id="category-dropdown" style="
+              appearance: none;
+              -webkit-appearance: none;
+              -moz-appearance: none;
+              background: transparent;
+              border: none;
+              font-size: 16px;
+              font-weight: 600;
+              color: #000000;
+              cursor: pointer;
+              padding: 4px 24px 4px 4px;
+              text-align: center;
+              outline: none;
+            ">
+              ${categories.map(cat => `
+                <option value="${cat}" ${this.filterCategory === cat ? 'selected' : ''}>${cat}</option>
+              `).join('')}
+            </select>
+            <span style="position: absolute; right: 50%; transform: translateX(calc(50% + ${sectionTitle.length * 4}px)); pointer-events: none; font-size: 12px;">▼</span>
           </div>
 
           <!-- Share message above the white line -->
@@ -432,23 +450,6 @@ class LoopLocalPopup {
           <!-- Section Title (No Category Selected) -->
           <div class="section-title" style="margin-bottom: 12px;">${sectionTitle}</div>
         `}
-
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px;">
-          <select id="category-filter" style="background: white; border: 1px solid #F0F0F0; color: #000000; padding: 6px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">
-            <option value="" disabled ${!this.filterCategory ? 'selected' : ''}>Category</option>
-            <option value="all" ${this.filterCategory === 'all' ? 'selected' : ''}>All Saves</option>
-            ${uncategorizedCount > 0 ? `<option value="no-category" ${this.filterCategory === 'no-category' ? 'selected' : ''}>No Category (${uncategorizedCount})</option>` : ''}
-            ${categories.map(cat => `
-              <option value="${cat}" ${this.filterCategory === cat ? 'selected' : ''}>${cat}</option>
-            `).join('')}
-          </select>
-
-          <select id="date-sort" style="background: white; border: 1px solid #F0F0F0; color: #000000; padding: 6px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">
-            <option value="" disabled ${!this.sortByDate ? 'selected' : ''}>Saved</option>
-            <option value="desc" ${this.sortByDate === 'desc' ? 'selected' : ''}>Newest</option>
-            <option value="asc" ${this.sortByDate === 'asc' ? 'selected' : ''}>Oldest</option>
-          </select>
-        </div>
 
         <!-- Add from Link Button -->
         <div style="margin-bottom: 12px;">
@@ -1244,17 +1245,9 @@ class LoopLocalPopup {
       });
     }
 
-    const dateSort = document.getElementById('date-sort');
-    if (dateSort) {
-      dateSort.addEventListener('change', (e) => {
-        this.sortByDate = e.target.value || null;
-        this.renderDashboard();
-      });
-    }
-
-    const categoryFilter = document.getElementById('category-filter');
-    if (categoryFilter) {
-      categoryFilter.addEventListener('change', (e) => {
+    const categoryDropdown = document.getElementById('category-dropdown');
+    if (categoryDropdown) {
+      categoryDropdown.addEventListener('change', (e) => {
         const value = e.target.value;
         if (value === '' || value === 'all') {
           this.filterCategory = null;
