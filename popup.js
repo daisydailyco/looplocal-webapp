@@ -572,11 +572,11 @@ class LoopLocalPopup {
     return `
       <div style="height: 100%; display: flex; flex-direction: column;">
         <!-- Header -->
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid white;">
+        <div style="margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid white;">
+          <div style="font-size: 15px; font-weight: 700; text-align: center; margin-bottom: 12px;">Edit Item</div>
           <button id="cancel-edit-btn" style="background: white; border: none; color: #000000; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s;">
             Cancel
           </button>
-          <div style="flex: 1; font-size: 15px; font-weight: 700; text-align: center;">Edit Item</div>
         </div>
 
         <!-- Edit Form -->
