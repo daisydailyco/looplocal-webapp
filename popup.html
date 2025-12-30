@@ -358,7 +358,7 @@
   <div id="login-screen" style="display: none;">
     <div class="content" style="padding: 30px 20px;">
       <div style="text-align: center; margin-bottom: 24px;">
-        <h2 id="welcome-text" style="font-size: 18px; font-weight: 700; margin-bottom: 8px; font-family: 'Brush Script MT', cursive; color: #000000; overflow: hidden; border-right: 2px solid #000000; white-space: nowrap; margin: 0 auto 8px auto; width: 0; animation: typing 2s steps(8, end) forwards, blink 0.75s step-end infinite;">Welcome!</h2>
+        <h2 id="welcome-text" style="font-size: 36px; font-weight: 700; margin-bottom: 8px; font-family: 'Brush Script MT', cursive; color: #000000; overflow: hidden; border-right: 3px solid #000000; white-space: nowrap; margin: 0 auto 8px auto; width: 0; animation: typing 3s steps(8, end) forwards, blink 0.75s step-end 4, removeCursor 0s 3s forwards;">Welcome!</h2>
         <p style="font-size: 13px; opacity: 0.8; line-height: 1.4; margin-bottom: 8px;">
           Drop the Events List~Connect in a New Way
         </p>
@@ -370,7 +370,7 @@
       <style>
         @keyframes typing {
           from { width: 0; }
-          to { width: 100px; }
+          to { width: 200px; }
         }
 
         @keyframes blink {
@@ -378,8 +378,12 @@
           50% { border-color: #000000; }
         }
 
+        @keyframes removeCursor {
+          to { border-right: none; }
+        }
+
         #welcome-text {
-          animation: typing 2s steps(8, end) forwards, blink 0.75s step-end infinite;
+          animation: typing 3s steps(8, end) forwards, blink 0.75s step-end 4, removeCursor 0s 3s forwards;
         }
       </style>
 
