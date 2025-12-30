@@ -396,10 +396,15 @@ class LoopLocalPopup {
     const categories = this.getCategories();
     const uncategorizedCount = this.getUncategorizedItems().length;
     const sectionTitle = this.getSectionTitle();
-    
+
     // Check if we can share (viewing a specific category)
     const canShare = this.filterCategory && this.filterCategory !== 'all' && this.filterCategory !== 'no-category';
-    
+
+    // Get items missing locations (only for current category if filtering)
+    const itemsNeedingLocation = canShare ? sortedItems.filter(item =>
+      !item.latitude || !item.longitude
+    ) : [];
+
     return `
       <div class="recent-saves">
         ${canShare ? `
@@ -407,7 +412,7 @@ class LoopLocalPopup {
           <div style="text-align: center; font-size: 16px; font-weight: 600; margin-bottom: 12px;">
             ${sectionTitle}
           </div>
-          
+
           <!-- Back Button (Left) & Share Button (Right) -->
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid white;">
             <button id="back-to-all-btn" style="background: white; border: none; color: #000000; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
@@ -447,10 +452,19 @@ class LoopLocalPopup {
             <span>Add from Link</span>
           </button>
         </div>
-        
+
         <div id="recent-items">
           ${this.renderRecentItems(sortedItems)}
         </div>
+
+        ${canShare && itemsNeedingLocation.length > 0 ? `
+          <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.1);">
+            <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; color: #FF6B6B; text-align: center;">
+              Items Missing Location
+            </div>
+            ${this.renderMissingLocationCards(itemsNeedingLocation)}
+          </div>
+        ` : ''}
       </div>
 
       <div class="actions">
