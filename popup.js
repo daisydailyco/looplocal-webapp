@@ -893,25 +893,39 @@ class LoopLocalPopup {
         return;
       }
 
-      // Debug: Log what we're about to share
-      console.log('🚀 Sharing category:', this.filterCategory);
-      console.log('📦 Items to share:', categoryItems.length);
-      categoryItems.forEach((item, i) => {
-        console.log(`Item ${i + 1}:`, {
-          name: item.venue_name || item.event_name,
-          address: item.address,
-          lat: item.latitude,
-          lng: item.longitude,
-          hasCoords: !!(item.latitude && item.longitude)
-        });
-      });
-
       // Show loading state
       const shareBtn = document.getElementById('share-category-btn');
       if (shareBtn) {
         shareBtn.innerHTML = '<span>⏳</span><span>Sharing...</span>';
         shareBtn.style.pointerEvents = 'none';
       }
+
+      // Format items to match backend SavedItem model
+      const formattedItems = categoryItems.map(item => ({
+        id: item.id || Date.now().toString(),
+        user_id: item.user_id || (this.currentUser?.id || 'local'),
+        platform: item.platform || 'instagram',
+        url: item.url || '',
+        content: item.content || '',
+        images: item.images || [],
+        author: item.author || 'unknown',
+        event_name: item.event_name || null,
+        venue_name: item.venue_name || null,
+        address: item.address || null,
+        coordinates: item.coordinates || null,
+        event_date: item.event_date || null,
+        start_time: item.start_time || null,
+        end_time: item.end_time || null,
+        event_type: item.event_type || item.category || null,
+        tags: item.tags || [],
+        category: item.category || null,
+        ai_processed: item.ai_processed || false,
+        confidence_score: item.confidence_score || 0.0,
+        saved_at: item.saved_at || new Date().toISOString()
+      }));
+
+      console.log('🚀 Sharing category:', this.filterCategory);
+      console.log('📦 Items to share:', formattedItems.length);
 
       // Send to backend
       const response = await fetch('https://web-production-5630.up.railway.app/v1/share', {
@@ -921,12 +935,14 @@ class LoopLocalPopup {
         },
         body: JSON.stringify({
           category: this.filterCategory,
-          items: categoryItems
+          items: formattedItems
         })
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to create share link: ${response.status}`);
+        const errorText = await response.text();
+        console.error('Backend error:', errorText);
+        throw new Error(`Failed to create share link: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
@@ -939,8 +955,8 @@ class LoopLocalPopup {
 
     } catch (error) {
       console.error('Share failed:', error);
-      alert('Failed to create share link. Make sure the backend is running at https://web-production-5630.up.railway.app');
-      
+      alert(`Failed to create share link: ${error.message}\n\nPlease try again or check the console for more details.`);
+
       // Reset button
       const shareBtn = document.getElementById('share-category-btn');
       if (shareBtn) {
