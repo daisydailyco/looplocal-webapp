@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoopLocal - Save & Share Local Experiences</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#e7ac6d">
+
+  <!-- iOS Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="LoopLocal">
+
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="landing-container">
+    <div class="landing-header">
+      <div class="header-content">
+        <div class="logo">LoopLocal</div>
+        <div class="tagline">Your Loop. Your Local.</div>
+      </div>
+    </div>
+
+    <div class="landing-content">
+      <!-- Extension CTA Buttons -->
+      <div style="text-align: center; margin-bottom: 40px;">
+        <div class="cta-buttons">
+          <a href="https://chromewebstore.google.com/detail/dekngoiefdiboafldkkefkpiddndnfjo?utm_source=item-share-cb" class="chrome-button" target="_blank" id="chrome-button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+              <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="12" cy="12" r="4" fill="currentColor"/>
+              <path d="M12 2 L12 8 M12 16 L12 22 M2 12 L8 12 M16 12 L22 12" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            Get Chrome Extension
+          </a>
+          <a href="https://looplocals.com" class="cta-button" target="_blank">
+            Join the App Waitlist!
+          </a>
+        </div>
+      </div>
+
+      <!-- Try It Now Banner -->
+      <div class="try-now-banner">
+        <div class="banner-content">
+          <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Start Creating Your List Now!</h2>
+          <p style="font-size: 15px; opacity: 0.9; margin-bottom: 16px;">Try LoopLocal instantly - no login required. Log in to save your lists permanently.</p>
+          <a href="/login.html" class="login-link-button">Log In</a>
+        </div>
+      </div>
+
+      <!-- How It Works Section -->
+      <div class="how-it-works-section">
+        <h2 style="text-align: center; font-size: 32px; font-weight: 700; margin-bottom: 40px;">How It Works</h2>
+        <div class="how-it-works-steps">
+          <div class="step-card">
+            <h3>Browse & Discover</h3>
+            <p>Scroll through Instagram or TikTok and find local spots, events, and hidden gems</p>
+          </div>
+
+          <div class="step-card">
+            <h3>Save & Organize</h3>
+            <p>Click the extension to save spots into custom categories and add locations to your personal map</p>
+          </div>
+
+          <div class="step-card">
+            <h3>Share Your Loop</h3>
+            <p>Generate a shareable link with an interactive map so friends can see your curated list</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- See It In Action Section -->
+      <div class="demo-section">
+        <h2 style="text-align: center; font-size: 32px; font-weight: 700; margin-bottom: 40px;">See It In Action</h2>
+        <div class="demo-screenshots">
+          <div class="screenshot-card">
+            <div class="screenshot-placeholder">
+              <div style="font-size: 48px; margin-bottom: 12px;">📋</div>
+              <p style="font-size: 14px; opacity: 0.7;">Extension Popup</p>
+            </div>
+            <p style="text-align: center; margin-top: 12px; font-size: 14px; font-weight: 600;">Organize your saves by category</p>
+          </div>
+
+          <div class="screenshot-card">
+            <div class="screenshot-placeholder">
+              <div style="font-size: 48px; margin-bottom: 12px;">🗺️</div>
+              <p style="font-size: 14px; opacity: 0.7;">Share Page</p>
+            </div>
+            <p style="text-align: center; margin-top: 12px; font-size: 14px; font-weight: 600;">Share lists with interactive maps</p>
+          </div>
+
+          <div class="screenshot-card">
+            <div class="screenshot-placeholder">
+              <div style="font-size: 48px; margin-bottom: 12px;">📍</div>
+              <p style="font-size: 14px; opacity: 0.7;">Map View</p>
+            </div>
+            <p style="text-align: center; margin-top: 12px; font-size: 14px; font-weight: 600;">See all your spots on one map</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon">📍</div>
+          <h3>Save from Instagram</h3>
+          <p>One-click save local spots while browsing</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🗂️</div>
+          <h3>Organize & Filter</h3>
+          <p>Create custom categories for restaurants, bars, events</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <h3>Share Lists</h3>
+          <p>Send curated local guides to friends instantly</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🗺️</div>
+          <h3>Map View</h3>
+          <p>See all your spots on an interactive map</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="landing-footer">
+      <p>Made with ❤️ for local explorers</p>
+    </div>
+  </div>
+
+  <!-- Auth Token Detection - Redirect to callback page if auth tokens present -->
+  <script>
+    // Check if URL contains authentication tokens (from email confirmation)
+    if (window.location.hash.includes('access_token')) {
+      console.log('Auth tokens detected, redirecting to callback page...');
+      // Redirect to callback page with hash preserved
+      window.location.href = '/auth-callback.html' + window.location.hash;
+    }
+  </script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then((registration) => {
+            console.log('ServiceWorker registered:', registration.scope);
+          })
+          .catch((error) => {
+            console.log('ServiceWorker registration failed:', error);
+          });
+      });
+    }
+  </script>
+</body>
+</html>

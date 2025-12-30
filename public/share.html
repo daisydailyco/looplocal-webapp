@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shared List - LoopLocal</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#e7ac6d">
+
+  <!-- iOS Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="LoopLocal">
+
+  <link rel="stylesheet" href="/style.css">
+  <!-- MapLibre GL CSS -->
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="share-container">
+    <!-- Loading State -->
+    <div id="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading shared list...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="error-state" style="display: none;">
+      <div class="error-icon">⚠️</div>
+      <h2>List Not Found</h2>
+      <p>This shared list doesn't exist or has been removed.</p>
+      <a href="/" class="cta-button">Go to LoopLocal</a>
+    </div>
+
+    <!-- Content (Hidden Until Loaded) -->
+    <div id="content" style="display: none;">
+      <!-- Header -->
+      <div class="share-header">
+        <div class="logo-small">
+          <a href="/">LoopLocal</a>
+        </div>
+      </div>
+
+      <!-- Category Info -->
+      <div class="category-header">
+        <h1 id="category-name">Loading...</h1>
+        <div class="category-meta">
+          <span id="item-count">0 places</span>
+          <span class="separator">•</span>
+          <span id="view-count">0 views</span>
+        </div>
+      </div>
+
+      <!-- Map Container -->
+      <div id="map-container" class="map-container">
+        <div id="radar-map"></div>
+      </div>
+
+      <!-- Edit Order Button -->
+      <div style="text-align: center; margin: 30px 0 20px;">
+        <button id="edit-order-btn" class="edit-button">
+          Edit Order
+        </button>
+        <div id="edit-mode-controls" style="display: none;">
+          <p style="font-size: 14px; opacity: 0.8; margin-bottom: 12px;">Drag and drop to reorder</p>
+          <button id="save-order-btn" class="edit-button" style="background: #42A746; color: white;">
+            Save Order
+          </button>
+          <button id="cancel-order-btn" class="edit-button" style="margin-left: 10px;">
+            Cancel
+          </button>
+        </div>
+      </div>
+
+      <!-- Location Cards -->
+      <div id="location-list" class="location-list">
+        <!-- Cards will be inserted here by JavaScript -->
+      </div>
+
+      <!-- CTA Section -->
+      <div class="cta-section">
+        <h2>Your Loop. Your Local.</h2>
+        <p>Save and organize local spots from Instagram</p>
+        <a href="https://www.looplocal.app" class="cta-button" target="_blank" style="box-shadow: 0 8px 16px rgba(0,0,0,0.3); border: 2px solid rgba(0,0,0,0.15);">
+          Create Your Own List
+        </a>
+      </div>
+
+      <!-- Footer -->
+      <div class="share-footer">
+        <p>Shared with <a href="/">LoopLocal</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load MapLibre GL JS -->
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+  <!-- Load our app script -->
+  <script src="/share.js"></script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then((registration) => {
+            console.log('ServiceWorker registered:', registration.scope);
+          })
+          .catch((error) => {
+            console.log('ServiceWorker registration failed:', error);
+          });
+      });
+    }
+  </script>
+</body>
+</html>

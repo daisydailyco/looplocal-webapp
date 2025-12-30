@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirming Email - LoopLocal</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#e7ac6d">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f0f0f0 0%, #f9f8e5 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000000;
+    }
+
+    .callback-container {
+      text-align: center;
+      padding: 40px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 400px;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(0,0,0,0.1);
+      border-top: 4px solid #000000;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 16px;
+      color: #666;
+    }
+
+    .error {
+      color: #ff3b30;
+      margin-top: 20px;
+    }
+
+    .success {
+      color: #42A746;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="callback-container">
+    <div class="spinner"></div>
+    <h1>Confirming your email...</h1>
+    <p id="message">Please wait</p>
+  </div>
+
+  <script src="/auth.js"></script>
+  <script>
+    const messageEl = document.getElementById('message');
+
+    async function handleAuthCallback() {
+      try {
+        // Get the hash fragment from URL
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+        const expiresIn = hashParams.get('expires_in');
+        const tokenType = hashParams.get('token_type');
+        const type = hashParams.get('type');
+
+        console.log('Auth callback - type:', type, 'has token:', !!accessToken);
+
+        if (!accessToken || !refreshToken) {
+          throw new Error('No authentication tokens found in URL');
+        }
+
+        // Create session object
+        const session = {
+          access_token: accessToken,
+          refresh_token: refreshToken,
+          expires_in: parseInt(expiresIn),
+          token_type: tokenType || 'bearer',
+          expires_at: Math.floor(Date.now() / 1000) + parseInt(expiresIn)
+        };
+
+        // Save session to localStorage
+        saveSession(session);
+
+        // Verify the session with backend
+        const verification = await verifySession();
+
+        if (verification.valid && verification.user) {
+          saveUser(verification.user);
+
+          messageEl.textContent = 'Email confirmed! Redirecting to dashboard...';
+          messageEl.className = 'success';
+
+          // Redirect to dashboard
+          setTimeout(() => {
+            window.location.href = '/dashboard.html';
+          }, 1500);
+        } else {
+          throw new Error('Session verification failed');
+        }
+
+      } catch (error) {
+        console.error('Auth callback error:', error);
+        messageEl.textContent = 'Error confirming email. Please try logging in.';
+        messageEl.className = 'error';
+
+        // Redirect to login after error
+        setTimeout(() => {
+          window.location.href = '/login.html';
+        }, 3000);
+      }
+    }
+
+    // Run on page load
+    handleAuthCallback();
+  </script>
+</body>
+</html>
