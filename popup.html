@@ -8,10 +8,8 @@
     html, body {
       width: 350px;
       height: 640px;
-      max-height: 640px;
       margin: 0;
       padding: 0;
-      overflow: hidden;
       box-sizing: border-box;
     }
 
@@ -19,25 +17,15 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #f0f0f0 0%, #f9f8e5 100%);
       color: #000000;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
     .header {
       padding: 20px;
       text-align: center;
       border-bottom: 1px solid rgba(0,0,0,0.1);
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 102px;
-      box-sizing: border-box;
-      background: linear-gradient(135deg, #f0f0f0 0%, #f9f8e5 100%);
-      z-index: 1;
+      flex-shrink: 0;
     }
 
     .logo {
@@ -56,14 +44,6 @@
 
     .content {
       padding: 20px;
-      position: absolute;
-      top: 102px;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-      box-sizing: border-box;
     }
 
     .stats {
@@ -215,21 +195,21 @@
     }
 
     /* Scrollbar styling */
-    .content::-webkit-scrollbar {
+    body::-webkit-scrollbar {
       width: 6px;
     }
 
-    .content::-webkit-scrollbar-track {
+    body::-webkit-scrollbar-track {
       background: rgba(0,0,0,0.05);
       border-radius: 3px;
     }
 
-    .content::-webkit-scrollbar-thumb {
+    body::-webkit-scrollbar-thumb {
       background: rgba(0,0,0,0.2);
       border-radius: 3px;
     }
 
-    .content::-webkit-scrollbar-thumb:hover {
+    body::-webkit-scrollbar-thumb:hover {
       background: rgba(0,0,0,0.3);
     }
 
@@ -375,7 +355,7 @@
   </div>
 
   <!-- Login Screen (Hidden when logged in) -->
-  <div id="login-screen" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #f0f0f0 0%, #f9f8e5 100%); z-index: 10; overflow-y: auto;">
+  <div id="login-screen" style="display: none;">
     <div class="header">
       <div class="logo">LoopLocal</div>
       <div class="tagline">Your Loop. Your Local.</div>
