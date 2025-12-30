@@ -1131,10 +1131,16 @@ class LoopLocalPopup {
           this.autocompleteInstance = null;
           this.selectedAddress = null;
 
-          await this.removeItem(this.editingItem.id);
+          // Save item ID before clearing
+          const itemIdToRemove = this.editingItem.id;
+
+          // Change view back to saves before removing
           this.viewMode = 'saves';
           this.editingItem = null;
           this.previewItem = null;
+
+          // Now remove the item (this will call renderDashboard)
+          await this.removeItem(itemIdToRemove);
         }
       });
       removeEditBtn.addEventListener('mouseenter', (e) => {
