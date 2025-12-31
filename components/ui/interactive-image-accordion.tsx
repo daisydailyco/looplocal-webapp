@@ -1,7 +1,22 @@
+'use client';
+
 import React, { useState } from 'react';
 
+// --- Types ---
+interface AccordionItemData {
+  id: number;
+  title: string;
+  imageUrl: string;
+}
+
+interface AccordionItemProps {
+  item: AccordionItemData;
+  isActive: boolean;
+  onMouseEnter: () => void;
+}
+
 // --- Data for the image accordion ---
-const accordionItems = [
+const accordionItems: AccordionItemData[] = [
   {
     id: 1,
     title: 'Cafes & Coffee Shops',
@@ -30,7 +45,7 @@ const accordionItems = [
 ];
 
 // --- Accordion Item Component ---
-const AccordionItem = ({ item, isActive, onMouseEnter }) => {
+const AccordionItem: React.FC<AccordionItemProps> = ({ item, isActive, onMouseEnter }) => {
   return (
     <div
       className={`
@@ -45,7 +60,11 @@ const AccordionItem = ({ item, isActive, onMouseEnter }) => {
         src={item.imageUrl}
         alt={item.title}
         className="absolute inset-0 w-full h-full object-cover"
-        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/400x450/2d3748/ffffff?text=Image+Error'; }}
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          target.onerror = null;
+          target.src = 'https://placehold.co/400x450/2d3748/ffffff?text=Image+Error';
+        }}
       />
       {/* Dark overlay for better text readability */}
       <div className="absolute inset-0 bg-black bg-opacity-40"></div>
@@ -72,9 +91,9 @@ const AccordionItem = ({ item, isActive, onMouseEnter }) => {
 
 // --- Main App Component ---
 export function LandingAccordionItem() {
-  const [activeIndex, setActiveIndex] = useState(4);
+  const [activeIndex, setActiveIndex] = useState<number>(4);
 
-  const handleItemHover = (index) => {
+  const handleItemHover = (index: number) => {
     setActiveIndex(index);
   };
 

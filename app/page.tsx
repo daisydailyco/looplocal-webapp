@@ -15,9 +15,6 @@ export default function Home() {
       </header>
 
       <main>
-        {/* Interactive Accordion Section */}
-        <LandingAccordionItem />
-
         {/* Try It Now Banner */}
         <section className="container mx-auto px-4 py-12">
           <div className="bg-white border-2 border-[#42a746] rounded-3xl p-12 text-center shadow-lg">
@@ -33,6 +30,9 @@ export default function Home() {
             </Link>
           </div>
         </section>
+
+        {/* Interactive Accordion Section */}
+        <LandingAccordionItem />
 
         {/* How It Works Section */}
         <section className="container mx-auto px-4 py-16">
