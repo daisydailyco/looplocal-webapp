@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "LoopLocal: Save & Share",
+  "name": "ParaSosh: Save & Share",
   "version": "1.3.0",
   "description": "Save local spots from Instagram and TikTok, organize into custom categories, and share curated lists with interactive maps.",
   "permissions": [
@@ -46,7 +46,7 @@
   }],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "LoopLocal"
+    "default_title": "ParaSosh"
   },
   "icons": {
     "16": "icons/icon16.png",

@@ -1,5 +1,5 @@
 // popup.js - Complete with Share Functionality & Authentication
-class LoopLocalPopup {
+class ParaSoshPopup {
   constructor() {
     this.currentUser = null;
     this.savedItems = [];
@@ -802,7 +802,7 @@ class LoopLocalPopup {
   renderRecentItems(items) {
     if (items.length === 0) {
       let message = 'No saves yet!';
-      let subMessage = 'Visit Instagram and click Save to LoopLocal on posts';
+      let subMessage = 'Visit Instagram and click Save to ParaSosh on posts';
       
       if (this.filterCategory === 'no-category') {
         message = 'No uncategorized items';
@@ -1785,4 +1785,4 @@ class LoopLocalPopup {
   }
 }
 
-new LoopLocalPopup();
+new ParaSoshPopup();

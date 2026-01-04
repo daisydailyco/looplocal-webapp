@@ -1,18 +1,18 @@
 // content-scripts/tiktok.js
-console.log('[LoopLocal] TikTok script loaded!', window.location.href);
+console.log('[ParaSosh] TikTok script loaded!', window.location.href);
 
-class TikTokLoopLocal {
+class TikTokParaSosh {
   constructor() {
     this.platform = 'tiktok';
     this.customCategories = [];
-    console.log('[LoopLocal] TikTokLoopLocal initialized');
+    console.log('[ParaSosh] TikTokParaSosh initialized');
     this.init();
   }
 
   async init() {
-    console.log('[LoopLocal] Init starting...');
+    console.log('[ParaSosh] Init starting...');
     await this.loadCustomCategories();
-    console.log('[LoopLocal] Categories loaded, adding buttons in 2s...');
+    console.log('[ParaSosh] Categories loaded, adding buttons in 2s...');
     setTimeout(() => this.addSaveButtons(), 2000);
     this.observeNewVideos();
   }
@@ -44,7 +44,7 @@ class TikTokLoopLocal {
       'div[class*="DivVideoWrapper"]' // Single video modal
     ].join(', '));
 
-    console.log(`[LoopLocal] Found ${videos.length} video containers`);
+    console.log(`[ParaSosh] Found ${videos.length} video containers`);
 
     videos.forEach(video => {
       if (!video.querySelector('.looplocal-save-btn')) {
@@ -62,11 +62,11 @@ class TikTokLoopLocal {
                             video.querySelector('[data-e2e="video-player-action-bar"]');
 
     if (!actionsContainer) {
-      console.log('[LoopLocal] No actions container found for video');
+      console.log('[ParaSosh] No actions container found for video');
       return;
     }
 
-    console.log('[LoopLocal] Adding save button to video');
+    console.log('[ParaSosh] Adding save button to video');
 
     const saveBtn = document.createElement('button');
     saveBtn.className = 'looplocal-save-btn';
@@ -162,7 +162,7 @@ class TikTokLoopLocal {
               color: #000000;
               font-size: 20px;
               font-weight: 700;
-            ">Save to LoopLocal</h3>
+            ">Save to ParaSosh</h3>
             <button class="looplocal-modal-close" style="
               background: white;
               border: none;
@@ -478,7 +478,7 @@ class TikTokLoopLocal {
       const currentUrl = location.href;
       if (currentUrl !== lastUrl) {
         lastUrl = currentUrl;
-        console.log('[LoopLocal] URL changed to:', currentUrl);
+        console.log('[ParaSosh] URL changed to:', currentUrl);
         // Give TikTok time to load the new content
         setTimeout(() => this.addSaveButtons(), 1000);
         setTimeout(() => this.addSaveButtons(), 2000);
@@ -495,8 +495,8 @@ class TikTokLoopLocal {
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    new TikTokLoopLocal();
+    new TikTokParaSosh();
   });
 } else {
-  new TikTokLoopLocal();
+  new TikTokParaSosh();
 }

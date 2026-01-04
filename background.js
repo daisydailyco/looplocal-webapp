@@ -1,7 +1,7 @@
 // Import auth module for service worker
 importScripts('ext-auth.js');
 
-class LoopLocalAPI {
+class ParaSoshAPI {
   constructor() {
     this.API_BASE = 'https://web-production-5630.up.railway.app/v1';
     this.setupMessageHandlers();
@@ -54,7 +54,7 @@ class LoopLocalAPI {
         chrome.notifications.create({
           type: 'basic',
           iconUrl: 'icons/icon48.png',
-          title: '🎉 Saved to LoopLocal!',
+          title: '🎉 Saved to ParaSosh!',
           message: 'Synced to your dashboard'
         });
 
@@ -205,4 +205,4 @@ async saveLocallyWithAI(postData, aiData) {
   }
 }
 
-new LoopLocalAPI();
+new ParaSoshAPI();

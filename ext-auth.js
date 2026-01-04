@@ -1,4 +1,4 @@
-// LoopLocal Extension Authentication Module
+// ParaSosh Extension Authentication Module
 // Shared between popup and background scripts
 
 const API_BASE = 'https://web-production-5630.up.railway.app';

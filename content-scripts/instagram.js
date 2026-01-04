@@ -1,5 +1,5 @@
 // content-scripts/instagram.js
-class InstagramLoopLocal {
+class InstagramParaSosh {
   constructor() {
     this.platform = 'instagram';
     this.customCategories = [];
@@ -48,7 +48,7 @@ class InstagramLoopLocal {
         <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" 
               stroke="#42a746" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      <span style="color: #42a746; font-weight: 700;">Save to LoopLocal</span>
+      <span style="color: #42a746; font-weight: 700;">Save to ParaSosh</span>
     `;
 
     saveBtn.addEventListener('click', (e) => {
@@ -112,7 +112,7 @@ class InstagramLoopLocal {
               color: #000000;
               font-size: 20px;
               font-weight: 700;
-            ">Save to LoopLocal</h3>
+            ">Save to ParaSosh</h3>
             <button class="looplocal-modal-close" style="
               background: white;
               border: none;
@@ -262,7 +262,7 @@ class InstagramLoopLocal {
               font-weight: 600;
               cursor: pointer;
               transition: all 0.2s;
-            ">Save to LoopLocal</button>
+            ">Save to ParaSosh</button>
           </div>
         </div>
       </div>
@@ -476,7 +476,7 @@ class InstagramLoopLocal {
           <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" 
                 stroke="#42a746" stroke-width="2.5"/>
         </svg>
-        <span style="color: #42a746; font-weight: 700;">Save to LoopLocal</span>
+        <span style="color: #42a746; font-weight: 700;">Save to ParaSosh</span>
       `;
     }, 3000);
   }
@@ -498,7 +498,7 @@ class InstagramLoopLocal {
           <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" 
                 stroke="#42a746" stroke-width="2.5"/>
         </svg>
-        <span style="color: #42a746; font-weight: 700;">Save to LoopLocal</span>
+        <span style="color: #42a746; font-weight: 700;">Save to ParaSosh</span>
       `;
     }, 3000);
   }
@@ -518,7 +518,7 @@ class InstagramLoopLocal {
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => new InstagramLoopLocal());
+  document.addEventListener('DOMContentLoaded', () => new InstagramParaSosh());
 } else {
-  new InstagramLoopLocal();
+  new InstagramParaSosh();
 }
