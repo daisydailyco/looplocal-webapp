@@ -46,7 +46,7 @@ class ParaSoshPopup {
 
   showLoginScreen() {
     document.getElementById('app-content').style.display = 'none';
-    document.getElementById('user-info').style.display = 'none';
+    document.getElementById('settings-btn').style.display = 'none';
     document.getElementById('login-screen').style.display = 'block';
 
     // Bind login form
@@ -91,24 +91,109 @@ class ParaSoshPopup {
   showDashboard() {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app-content').style.display = 'block';
-    document.getElementById('user-info').style.display = 'block';
+    document.getElementById('settings-btn').style.display = 'block';
 
-    // Show user email
-    if (this.currentUser && this.currentUser.email) {
-      document.getElementById('user-email').textContent = this.currentUser.email;
-    }
+    // Bind settings button
+    const settingsBtn = document.getElementById('settings-btn');
+    settingsBtn.onclick = () => this.showProfilePage();
+  }
+
+  showProfilePage() {
+    const appContent = document.getElementById('app-content');
+    appContent.innerHTML = `
+      <div style="padding: 30px 20px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <div style="
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #42a746 0%, #3a9340 100%);
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+            font-weight: 700;
+          ">
+            ${this.currentUser?.email?.charAt(0).toUpperCase() || 'U'}
+          </div>
+          <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Profile</h2>
+          <p style="font-size: 14px; opacity: 0.8;">${this.currentUser?.email || 'user@example.com'}</p>
+        </div>
+
+        <div style="
+          background: white;
+          border-radius: 12px;
+          padding: 20px;
+          margin-bottom: 16px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        ">
+          <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px; opacity: 0.7;">ACCOUNT</h3>
+          <div style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+          ">
+            <span style="font-size: 14px;">Email</span>
+            <span style="font-size: 14px; font-weight: 600;">${this.currentUser?.email || 'N/A'}</span>
+          </div>
+          <div style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+          ">
+            <span style="font-size: 14px;">Saved Items</span>
+            <span style="font-size: 14px; font-weight: 600;">${this.savedItems?.length || 0}</span>
+          </div>
+        </div>
+
+        <button id="profile-logout-btn" style="
+          width: 100%;
+          padding: 14px;
+          background: #ff3b30;
+          border: none;
+          color: white;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          margin-bottom: 12px;
+        ">Log Out</button>
+
+        <button id="back-to-dashboard-btn" style="
+          width: 100%;
+          padding: 14px;
+          background: white;
+          border: 1px solid rgba(0,0,0,0.2);
+          color: #000000;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+        ">Back to Dashboard</button>
+      </div>
+    `;
 
     // Bind logout button
-    const logoutBtn = document.getElementById('logout-btn');
-    logoutBtn.addEventListener('click', async () => {
-      logoutBtn.disabled = true;
-      logoutBtn.textContent = 'Logging out...';
+    document.getElementById('profile-logout-btn').onclick = async () => {
+      const btn = document.getElementById('profile-logout-btn');
+      btn.disabled = true;
+      btn.textContent = 'Logging out...';
 
       await extAuth.logout();
-
-      // Reload popup to show login screen
       window.location.reload();
-    });
+    };
+
+    // Bind back button
+    document.getElementById('back-to-dashboard-btn').onclick = () => {
+      this.renderDashboard();
+    };
   }
 
   initializeRadar() {
