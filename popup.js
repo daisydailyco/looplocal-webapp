@@ -103,22 +103,7 @@ class ParaSoshPopup {
     appContent.innerHTML = `
       <div style="padding: 30px 20px;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <div style="
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #42a746 0%, #3a9340 100%);
-            border-radius: 50%;
-            margin: 0 auto 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            color: white;
-            font-weight: 700;
-          ">
-            ${this.currentUser?.email?.charAt(0).toUpperCase() || 'U'}
-          </div>
-          <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Profile</h2>
+          <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Profile</h2>
           <p style="font-size: 14px; opacity: 0.8;">${this.currentUser?.email || 'user@example.com'}</p>
         </div>
 
@@ -154,9 +139,9 @@ class ParaSoshPopup {
         <button id="profile-logout-btn" style="
           width: 100%;
           padding: 14px;
-          background: #ff3b30;
-          border: none;
-          color: white;
+          background: white;
+          border: 1px solid rgba(0,0,0,0.2);
+          color: #ff3b30;
           border-radius: 8px;
           font-size: 14px;
           font-weight: 600;

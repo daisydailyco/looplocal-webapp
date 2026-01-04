@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ParaSosh: Save & Share",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Save local spots from Instagram and TikTok, organize into custom categories, and share curated lists with interactive maps.",
   "permissions": [
     "activeTab",
