@@ -1,6 +1,6 @@
 {
-  "name": "LoopLocal",
-  "short_name": "LoopLocal",
+  "name": "ParaSosh",
+  "short_name": "ParaSosh",
   "description": "Save and share your favorite local spots",
   "start_url": "/",
   "display": "standalone",
