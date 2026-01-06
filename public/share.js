@@ -72,7 +72,7 @@ function renderCategoryHeader(data) {
   }
 
   document.getElementById('view-count').textContent = `${data.views} view${data.views !== 1 ? 's' : ''}`;
-  document.title = `${data.category} - ParaSosh`;
+  document.title = `${data.category} - ParaSosh`; // Cache bust
 }
 
 function renderLocationCards(items) {
