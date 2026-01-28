@@ -1045,32 +1045,6 @@
         <input type="hidden" id="edit-item-id">
 
         <div class="form-group">
-          <label>Event/Venue Name *</label>
-          <input type="text" id="edit-event-name" required>
-        </div>
-
-        <div class="form-group">
-          <label>Venue Name</label>
-          <input type="text" id="edit-venue-name">
-        </div>
-
-        <div class="form-group">
-          <label>Address</label>
-          <input type="text" id="edit-address">
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Date</label>
-            <input type="date" id="edit-date">
-          </div>
-          <div class="form-group">
-            <label>Time</label>
-            <input type="time" id="edit-time">
-          </div>
-        </div>
-
-        <div class="form-group">
           <label>Category</label>
           <select id="edit-category">
             <option value="">Select category</option>
@@ -1084,13 +1058,23 @@
         </div>
 
         <div class="form-group">
-          <label>Tags (comma-separated)</label>
-          <input type="text" id="edit-tags">
+          <label>Name</label>
+          <input type="text" id="edit-event-name" required>
+        </div>
+
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="edit-address">
+        </div>
+
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="edit-date">
         </div>
 
         <div class="modal-actions">
-          <button type="button" class="modal-btn secondary" onclick="closeEditModal()">Cancel</button>
-          <button type="submit" class="modal-btn primary" id="update-btn">Update</button>
+          <button type="button" class="modal-btn secondary" onclick="deleteSave(document.getElementById('edit-item-id').value); closeEditModal();">Remove</button>
+          <button type="submit" class="modal-btn primary" id="update-btn">Save</button>
         </div>
       </form>
     </div>

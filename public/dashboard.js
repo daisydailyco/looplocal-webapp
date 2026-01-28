@@ -695,13 +695,10 @@ function editSave(itemId) {
 
   // Fill edit form
   document.getElementById('edit-item-id').value = save.id;
-  document.getElementById('edit-event-name').value = save.event_name || '';
-  document.getElementById('edit-venue-name').value = save.venue_name || '';
+  document.getElementById('edit-category').value = save.category || '';
+  document.getElementById('edit-event-name').value = save.event_name || save.venue_name || '';
   document.getElementById('edit-address').value = save.address || '';
   document.getElementById('edit-date').value = save.event_date || '';
-  document.getElementById('edit-time').value = save.start_time || '';
-  document.getElementById('edit-category').value = save.category || '';
-  document.getElementById('edit-tags').value = save.tags ? save.tags.join(', ') : '';
 
   // Open modal
   editModal.classList.add('active');
@@ -718,22 +715,17 @@ async function handleEditSave(e) {
 
   const updateBtn = document.getElementById('update-btn');
   updateBtn.disabled = true;
-  updateBtn.textContent = 'Updating...';
+  updateBtn.textContent = 'Saving...';
 
   try {
     const session = getSession();
     if (!session) throw new Error('No session found');
 
     const itemId = document.getElementById('edit-item-id').value;
+    const category = document.getElementById('edit-category').value;
     const eventName = document.getElementById('edit-event-name').value.trim();
-    const venueName = document.getElementById('edit-venue-name').value.trim();
     const address = document.getElementById('edit-address').value.trim();
     const date = document.getElementById('edit-date').value;
-    const time = document.getElementById('edit-time').value;
-    const category = document.getElementById('edit-category').value;
-    const tagsStr = document.getElementById('edit-tags').value.trim();
-
-    const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(t => t) : [];
 
     // Call backend PATCH /v1/user/saves/{id}
     const response = await fetch(`${API_BASE}/v1/user/saves/${itemId}`, {
@@ -743,13 +735,10 @@ async function handleEditSave(e) {
         'Authorization': `Bearer ${session.access_token}`
       },
       body: JSON.stringify({
-        event_name: eventName || null,
-        venue_name: venueName || null,
-        address: address || null,
-        event_date: date || null,
-        start_time: time || null,
         category: category || null,
-        tags: tags.length > 0 ? tags : null
+        event_name: eventName || null,
+        address: address || null,
+        event_date: date || null
       })
     });
 
@@ -777,7 +766,7 @@ async function handleEditSave(e) {
     alert('Failed to update save. Please try again.');
   } finally {
     updateBtn.disabled = false;
-    updateBtn.textContent = 'Update';
+    updateBtn.textContent = 'Save';
   }
 }
 
