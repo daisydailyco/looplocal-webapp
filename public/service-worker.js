@@ -1,5 +1,5 @@
 // LoopLocal Service Worker
-const CACHE_NAME = 'looplocal-v7';
+const CACHE_NAME = 'parasosh-v8';
 const urlsToCache = [
   '/',
   '/style.css',
