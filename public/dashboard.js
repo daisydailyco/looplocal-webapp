@@ -24,7 +24,6 @@ const savesGrid = document.getElementById('saves-grid');
 const emptyState = document.getElementById('empty-state');
 const sortSelect = document.getElementById('sort-select');
 const categoryFilter = document.getElementById('category-filter');
-const tagSearch = document.getElementById('tag-search');
 
 // Map elements
 const mapDiv = document.getElementById('map');
@@ -122,7 +121,6 @@ function initEventListeners() {
   // Filters
   sortSelect.addEventListener('change', applyFilters);
   categoryFilter.addEventListener('change', applyFilters);
-  tagSearch.addEventListener('input', applyFilters);
 
   // Add form submission
   addForm.addEventListener('submit', handleAddSave);
@@ -265,7 +263,6 @@ function updateCategoryFilter() {
 function applyFilters() {
   const sortValue = sortSelect.value;
   const categoryValue = categoryFilter.value;
-  const tagValue = tagSearch.value.toLowerCase().trim();
 
   // Filter by category
   filteredSaves = allSaves.filter(save => {
@@ -274,14 +271,6 @@ function applyFilters() {
     }
     return true;
   });
-
-  // Filter by tag
-  if (tagValue) {
-    filteredSaves = filteredSaves.filter(save => {
-      if (!save.tags) return false;
-      return save.tags.some(tag => tag.toLowerCase().includes(tagValue));
-    });
-  }
 
   // Sort
   filteredSaves.sort((a, b) => {
