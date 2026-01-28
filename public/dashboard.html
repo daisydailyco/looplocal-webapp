@@ -5,11 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - ParaSosh</title>
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-192.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-192.png">
-  <link rel="shortcut icon" href="/icons/icon-192.png">
-
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#e7ac6d">
@@ -144,6 +139,25 @@
     .tab.active {
       background: #000000;
       color: white;
+    }
+
+    .tab-action-btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      background: #000000;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-left: auto;
+    }
+
+    .tab-action-btn:hover {
+      background: #333333;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
     /* Tab Content */
@@ -719,6 +733,11 @@
 
       .tabs {
         overflow-x: auto;
+        flex-wrap: nowrap;
+      }
+
+      .tab-action-btn {
+        white-space: nowrap;
       }
 
       .saves-grid {
@@ -835,7 +854,6 @@
         <div class="user-email" id="user-email">user@example.com</div>
       </div>
       <div class="nav-right">
-        <button id="add-save-btn" class="add-save-btn">+ Add Save</button>
         <button id="logout-btn" class="logout-btn">Log Out</button>
       </div>
     </div>
@@ -844,10 +862,10 @@
     <div class="dashboard-container">
       <!-- Tabs -->
       <div class="tabs">
-        <button class="tab active" data-tab="saves">My Saves</button>
-        <button class="tab" data-tab="map">Map View</button>
+        <button class="tab active" data-tab="saves">Saves</button>
+        <button class="tab" data-tab="map">Map</button>
         <button class="tab" data-tab="calendar">Calendar</button>
-        <button class="tab" data-tab="categories">Categories</button>
+        <button id="add-save-btn" class="tab-action-btn">+New Save</button>
       </div>
 
       <!-- My Saves Tab -->

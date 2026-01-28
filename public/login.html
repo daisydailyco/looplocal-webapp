@@ -4,12 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Log In - ParaSosh</title>
-  <!-- Cache bust -->
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-192.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-192.png">
-  <link rel="shortcut icon" href="/icons/icon-192.png">
 
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
@@ -244,6 +238,29 @@
       text-decoration: underline;
     }
 
+    .remember-me-wrapper {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      margin-top: -8px;
+    }
+
+    .remember-me-wrapper input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+      cursor: pointer;
+      accent-color: #000000;
+    }
+
+    .remember-me-wrapper label {
+      font-size: 14px;
+      color: #000000;
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 0;
+    }
+
     @media (max-width: 768px) {
       .auth-card {
         padding: 30px 20px;
@@ -263,7 +280,7 @@
   <div class="auth-container">
     <div class="header">
       <div class="logo">ParaSosh</div>
-      <div class="tagline">Save & Share</div>
+      <div class="tagline">Your Loop. Your Local.</div>
     </div>
 
     <div class="auth-card">
@@ -294,6 +311,11 @@
           </div>
         </div>
 
+        <div class="remember-me-wrapper">
+          <input type="checkbox" id="remember-me" name="remember-me">
+          <label for="remember-me">Remember Me</label>
+        </div>
+
         <div id="loading-spinner" class="loading-spinner"></div>
 
         <button type="submit" id="submit-button" class="submit-button">
@@ -316,9 +338,59 @@
     const form = document.getElementById('login-form');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
+    const rememberMeCheckbox = document.getElementById('remember-me');
     const submitButton = document.getElementById('submit-button');
     const errorMessage = document.getElementById('error-message');
     const loadingSpinner = document.getElementById('loading-spinner');
+
+    // ===== Remember Me Cookie Functions =====
+    const REMEMBER_ME_COOKIE = 'parasosh_remember_email';
+    const REMEMBER_ME_DAYS = 30; // Cookie expiration in days
+
+    function setCookie(name, value, days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      const expires = `expires=${date.toUTCString()}`;
+      // Set cookie with Secure and SameSite flags for security
+      const secure = window.location.protocol === 'https:' ? '; Secure' : '';
+      document.cookie = `${name}=${encodeURIComponent(value)}; ${expires}; path=/; SameSite=Strict${secure}`;
+    }
+
+    function getCookie(name) {
+      const nameEQ = name + "=";
+      const ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) {
+          return decodeURIComponent(c.substring(nameEQ.length, c.length));
+        }
+      }
+      return null;
+    }
+
+    function deleteCookie(name) {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict`;
+    }
+
+    function saveRememberedEmail(email) {
+      setCookie(REMEMBER_ME_COOKIE, email, REMEMBER_ME_DAYS);
+    }
+
+    function getRememberedEmail() {
+      return getCookie(REMEMBER_ME_COOKIE);
+    }
+
+    function clearRememberedEmail() {
+      deleteCookie(REMEMBER_ME_COOKIE);
+    }
+
+    // ===== Page Load: Check for remembered email =====
+    const rememberedEmail = getRememberedEmail();
+    if (rememberedEmail) {
+      emailInput.value = rememberedEmail;
+      rememberMeCheckbox.checked = true;
+    }
 
     // Check if already logged in
     if (isLoggedIn()) {
@@ -365,6 +437,13 @@
         const result = await login(email, password);
 
         if (result.success) {
+          // Handle Remember Me
+          if (rememberMeCheckbox.checked) {
+            saveRememberedEmail(email);
+          } else {
+            clearRememberedEmail();
+          }
+
           // Redirect to dashboard
           window.location.href = '/dashboard.html';
         } else {
