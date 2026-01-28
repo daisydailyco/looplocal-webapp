@@ -392,10 +392,17 @@
       rememberMeCheckbox.checked = true;
     }
 
-    // Check if already logged in
-    if (isLoggedIn()) {
-      redirectToDashboard();
-    }
+    // Check if already logged in with valid session
+    (async function checkSession() {
+      const verification = await verifySession();
+      if (verification.valid) {
+        // Valid session, redirect to dashboard
+        redirectToDashboard();
+      } else {
+        // Invalid or expired session, clear it
+        clearSession();
+      }
+    })();
 
     // Toggle password visibility
     function togglePasswordVisibility(inputId, button) {
