@@ -195,9 +195,6 @@ function createSaveCard(save) {
   const card = document.createElement('div');
   card.className = 'save-card';
 
-  // Platform icon
-  const platformIcon = save.platform === 'instagram' ? '📸' : '🎵';
-
   // Format date
   let dateStr = '';
   if (save.event_date) {
@@ -215,24 +212,30 @@ function createSaveCard(save) {
   ).join('');
 
   card.innerHTML = `
-    <div class="card-platform">${platformIcon}</div>
+    <div class="card-edit-icon" data-save-id="${save.id}">+</div>
     <div class="card-title">${save.event_name || save.venue_name || 'Untitled'}</div>
     ${save.address ? `<div class="card-address">📍 ${save.address}</div>` : ''}
     ${dateStr ? `<div class="card-date">📅 ${dateStr}</div>` : ''}
     ${save.category ? `<div class="card-category">${save.category}</div>` : ''}
     ${save.tags && save.tags.length > 0 ? `<div class="card-tags">${tagsHTML}</div>` : ''}
-    <div class="card-actions">
-      <button class="card-btn" onclick="editSave('${save.id}')">Edit</button>
-      <button class="card-btn delete" onclick="deleteSave('${save.id}')">Delete</button>
+    <div class="card-link-preview">
+      <button class="card-link-btn" data-url="${save.url || ''}">Link Preview - Open in Tab</button>
     </div>
   `;
 
-  // Click card to open URL
-  card.addEventListener('click', (e) => {
-    if (!e.target.classList.contains('card-btn')) {
-      if (save.url) {
-        window.open(save.url, '_blank');
-      }
+  // Edit icon click handler
+  const editIcon = card.querySelector('.card-edit-icon');
+  editIcon.addEventListener('click', (e) => {
+    e.stopPropagation();
+    editSave(save.id);
+  });
+
+  // Link button click handler
+  const linkBtn = card.querySelector('.card-link-btn');
+  linkBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (save.url) {
+      window.open(save.url, '_blank');
     }
   });
 

@@ -170,16 +170,21 @@
     }
 
     /* My Saves Tab */
-    .filters {
+    .saves-container {
       background: white;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-bottom: 24px;
+    }
+
+    .filters {
       display: flex;
       flex-wrap: wrap;
       gap: 16px;
       align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e0e0e0;
     }
 
     .filter-group {
@@ -221,25 +226,56 @@
     }
 
     .save-card {
-      background: white;
+      background: #f9f9f9;
+      border: 1px solid #e0e0e0;
       border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      cursor: pointer;
       transition: all 0.2s;
       position: relative;
     }
 
     .save-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      background: white;
+      border-color: #d0d0d0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-    .card-platform {
+    .card-edit-icon {
       position: absolute;
       top: 16px;
       right: 16px;
-      font-size: 20px;
+      width: 28px;
+      height: 28px;
+      background: #f0f0f0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 18px;
+      font-weight: bold;
+      color: #666;
+    }
+
+    .card-edit-icon:hover {
+      background: #000000;
+      color: white;
+    }
+
+    .card-edit-icon:hover::after {
+      content: 'Edit';
+      position: absolute;
+      top: -30px;
+      right: 0;
+      background: #000000;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
 
     .card-title {
@@ -287,17 +323,15 @@
       margin-bottom: 12px;
     }
 
-    .card-actions {
-      display: flex;
-      gap: 8px;
+    .card-link-preview {
       margin-top: 16px;
-      border-top: 1px solid #e0e0e0;
       padding-top: 12px;
+      border-top: 1px solid #e0e0e0;
     }
 
-    .card-btn {
-      flex: 1;
-      padding: 8px 16px;
+    .card-link-btn {
+      width: 100%;
+      padding: 10px 16px;
       border: 1px solid #e0e0e0;
       border-radius: 6px;
       font-size: 13px;
@@ -306,19 +340,20 @@
       color: #000;
       cursor: pointer;
       transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    .card-btn:hover {
+    .card-link-btn:hover {
       background: #f0f0f0;
+      border-color: #000000;
     }
 
-    .card-btn.delete {
-      color: #ff3b30;
-      border-color: #ff3b30;
-    }
-
-    .card-btn.delete:hover {
-      background: #fff5f5;
+    .card-link-btn::before {
+      content: '🔗';
+      font-size: 16px;
     }
 
     .empty-state {
@@ -870,28 +905,31 @@
 
       <!-- My Saves Tab -->
       <div id="saves-tab" class="tab-content active">
-        <!-- Filters -->
-        <div class="filters">
-          <div class="filter-group">
-            <label>Sort By</label>
-            <select id="sort-select">
-              <option value="newest">Date (Newest)</option>
-              <option value="oldest">Date (Oldest)</option>
-              <option value="name-asc">Name (A-Z)</option>
-              <option value="name-desc">Name (Z-A)</option>
-            </select>
+        <!-- Saves Container (Filters + Grid) -->
+        <div class="saves-container">
+          <!-- Filters -->
+          <div class="filters">
+            <div class="filter-group">
+              <label>Sort By</label>
+              <select id="sort-select">
+                <option value="newest">Date (Newest)</option>
+                <option value="oldest">Date (Oldest)</option>
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Category</label>
+              <select id="category-filter">
+                <option value="">All Categories</option>
+              </select>
+            </div>
           </div>
-          <div class="filter-group">
-            <label>Category</label>
-            <select id="category-filter">
-              <option value="">All Categories</option>
-            </select>
-          </div>
-        </div>
 
-        <!-- Saves Grid -->
-        <div id="saves-grid" class="saves-grid">
-          <!-- Cards will be inserted here -->
+          <!-- Saves Grid -->
+          <div id="saves-grid" class="saves-grid">
+            <!-- Cards will be inserted here -->
+          </div>
         </div>
 
         <!-- Empty State -->
