@@ -923,18 +923,18 @@
           <!-- Filters -->
           <div class="filters">
             <div class="filter-group">
+              <label>Category</label>
+              <select id="category-filter">
+                <option value="">All Categories</option>
+              </select>
+            </div>
+            <div class="filter-group">
               <label>Sort By</label>
               <select id="sort-select">
                 <option value="newest">Date (Newest)</option>
                 <option value="oldest">Date (Oldest)</option>
                 <option value="name-asc">Name (A-Z)</option>
                 <option value="name-desc">Name (Z-A)</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Category</label>
-              <select id="category-filter">
-                <option value="">All Categories</option>
               </select>
             </div>
           </div>
@@ -1090,6 +1090,24 @@
           <button type="submit" class="modal-btn primary" id="update-btn">Save</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- View Save Modal -->
+  <div id="view-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="view-modal-title">Save Details</h2>
+        <button class="close-btn" onclick="closeViewModal()">&times;</button>
+      </div>
+
+      <div id="view-modal-content" style="margin-bottom: 24px;">
+        <!-- Save details will be inserted here -->
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="modal-btn primary" id="view-modal-edit-btn" style="width: 100%;">Edit</button>
+      </div>
     </div>
   </div>
 

@@ -295,17 +295,33 @@ function applyFilters() {
     }
   });
 
-  renderSaves();
+  // Render appropriate view based on active tab
+  const activeSavesTab = document.getElementById('saves-tab');
+  const activeMapTab = document.getElementById('map-tab');
+  const activeCalendarTab = document.getElementById('calendar-tab');
+
+  if (activeSavesTab.classList.contains('active')) {
+    renderSaves();
+  }
+  if (activeMapTab.classList.contains('active')) {
+    initMap();
+  }
+  if (activeCalendarTab.classList.contains('active')) {
+    renderCalendar();
+  }
 }
 
 // Initialize map
 function initMap() {
-  if (mapInitialized) {
-    return;
+  // Always reinitialize to reflect current filters
+  if (map) {
+    map.remove();
+    map = null;
   }
+  mapInitialized = false;
 
-  // Get saves with coordinates
-  const savesWithCoords = allSaves.filter(save =>
+  // Get saves with coordinates from filtered saves
+  const savesWithCoords = filteredSaves.filter(save =>
     save.coordinates && save.coordinates.lat && save.coordinates.lng
   );
 
@@ -448,8 +464,8 @@ function renderCalendar() {
   const calendarView = document.getElementById('calendar-view');
   const calendarEmpty = document.getElementById('calendar-empty');
 
-  // Get saves with dates
-  const savesWithDates = allSaves.filter(save => save.event_date);
+  // Get saves with dates from filtered saves
+  const savesWithDates = filteredSaves.filter(save => save.event_date);
 
   if (savesWithDates.length === 0) {
     calendarView.style.display = 'none';
@@ -558,11 +574,17 @@ function changeMonth(direction) {
 
 // Show saves for a specific date
 function showSavesForDate(dateStr) {
-  const savesForDate = allSaves.filter(save =>
+  const savesForDate = filteredSaves.filter(save =>
     save.event_date && save.event_date.startsWith(dateStr)
   );
 
   if (savesForDate.length === 0) return;
+
+  // If only one save, show details directly
+  if (savesForDate.length === 1) {
+    showSaveDetails(savesForDate[0].id);
+    return;
+  }
 
   // Format date nicely
   const date = new Date(dateStr + 'T00:00:00');
@@ -573,15 +595,91 @@ function showSavesForDate(dateStr) {
     day: 'numeric'
   });
 
-  let message = `Saves for ${dateFormatted}:\n\n`;
-  savesForDate.forEach((save, index) => {
-    message += `${index + 1}. ${save.event_name || save.venue_name || 'Untitled'}\n`;
-    if (save.address) message += `   📍 ${save.address}\n`;
-    if (save.start_time) message += `   🕐 ${save.start_time}\n`;
-    message += '\n';
-  });
+  // Show list of saves for this date
+  const viewModal = document.getElementById('view-modal');
+  const viewModalTitle = document.getElementById('view-modal-title');
+  const viewModalContent = document.getElementById('view-modal-content');
+  const editBtn = document.getElementById('view-modal-edit-btn');
 
-  alert(message);
+  viewModalTitle.textContent = dateFormatted;
+  editBtn.style.display = 'none';
+
+  let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+  savesForDate.forEach(save => {
+    html += `
+      <div onclick="showSaveDetails('${save.id}')" style="padding: 16px; background: #f9f9f9; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
+        <div style="font-weight: 600; font-size: 16px; margin-bottom: 4px;">${save.event_name || save.venue_name || 'Untitled'}</div>
+        ${save.address ? `<div style="font-size: 14px; color: #666;">📍 ${save.address}</div>` : ''}
+        ${save.category ? `<div style="font-size: 12px; color: #666; text-transform: uppercase; margin-top: 4px;">${save.category}</div>` : ''}
+      </div>
+    `;
+  });
+  html += '</div>';
+
+  viewModalContent.innerHTML = html;
+  viewModal.classList.add('active');
+}
+
+// Show individual save details
+function showSaveDetails(saveId) {
+  const save = allSaves.find(s => s.id === saveId);
+  if (!save) return;
+
+  const viewModal = document.getElementById('view-modal');
+  const viewModalTitle = document.getElementById('view-modal-title');
+  const viewModalContent = document.getElementById('view-modal-content');
+  const editBtn = document.getElementById('view-modal-edit-btn');
+
+  viewModalTitle.textContent = save.event_name || save.venue_name || 'Save Details';
+
+  let html = '<div style="display: flex; flex-direction: column; gap: 16px;">';
+
+  if (save.category) {
+    html += `<div>
+      <div style="font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 4px;">Category</div>
+      <div style="font-size: 16px;">${save.category}</div>
+    </div>`;
+  }
+
+  if (save.address) {
+    html += `<div>
+      <div style="font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 4px;">Location</div>
+      <div style="font-size: 16px;">📍 ${save.address}</div>
+    </div>`;
+  }
+
+  if (save.event_date) {
+    const date = new Date(save.event_date);
+    const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    html += `<div>
+      <div style="font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 4px;">Date</div>
+      <div style="font-size: 16px;">📅 ${dateStr}</div>
+    </div>`;
+  }
+
+  if (save.url) {
+    html += `<div>
+      <div style="font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 4px;">Link</div>
+      <a href="${save.url}" target="_blank" style="font-size: 16px; color: #000; text-decoration: underline;">🔗 Open in new tab</a>
+    </div>`;
+  }
+
+  html += '</div>';
+
+  viewModalContent.innerHTML = html;
+  editBtn.style.display = 'block';
+  editBtn.onclick = () => {
+    closeViewModal();
+    editSave(saveId);
+  };
+
+  viewModal.classList.add('active');
+}
+
+// Close view modal
+function closeViewModal() {
+  const viewModal = document.getElementById('view-modal');
+  viewModal.classList.remove('active');
 }
 
 // Open add modal
