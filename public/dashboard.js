@@ -199,38 +199,35 @@ async function handleUpdate() {
   updateBtn.textContent = 'Updating...';
 
   try {
+    // Clear all caches first
+    if ('caches' in window) {
+      const cacheNames = await caches.keys();
+      await Promise.all(
+        cacheNames.map(cacheName => caches.delete(cacheName))
+      );
+    }
+
     // Force service worker to update
     if ('serviceWorker' in navigator) {
       const registration = await navigator.serviceWorker.getRegistration();
       if (registration) {
-        await registration.update();
+        // Unregister the service worker
+        await registration.unregister();
 
-        // Tell the service worker to skip waiting and activate immediately
-        const waiting = registration.waiting || registration.installing;
-        if (waiting) {
-          waiting.postMessage({ type: 'SKIP_WAITING' });
+        // Wait a moment for unregistration to complete
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-          // Wait for the new service worker to activate
-          navigator.serviceWorker.addEventListener('controllerchange', () => {
-            // Reload the page to get the latest version
-            window.location.reload();
-          });
-        } else {
-          // No update available, just reload
-          window.location.reload();
-        }
-      } else {
-        // No service worker registered, just reload
-        window.location.reload();
+        // Register the service worker again
+        await navigator.serviceWorker.register('/service-worker.js');
       }
-    } else {
-      // Service workers not supported, just reload
-      window.location.reload();
     }
+
+    // Force a hard reload to get fresh content
+    window.location.reload(true);
   } catch (error) {
     console.error('Update error:', error);
-    // If update fails, just reload the page
-    window.location.reload();
+    // If update fails, just do a hard reload
+    window.location.reload(true);
   }
 }
 
