@@ -189,6 +189,11 @@
       background: #f0f0f0;
     }
 
+    .settings-dropdown-btn.update-available {
+      color: #42a746;
+      font-weight: 600;
+    }
+
     .settings-dropdown-btn.logout-btn {
       color: #ff3b30;
     }
@@ -1018,8 +1023,8 @@
               <div class="settings-dropdown-email" id="user-email">user@example.com</div>
             </div>
             <div class="settings-dropdown-item">
-              <button class="settings-dropdown-btn update-btn" id="update-btn">
-                Updated Version
+              <button class="settings-dropdown-btn update-btn" id="settings-update-btn">
+                Update Version
               </button>
             </div>
             <div class="settings-dropdown-item">
@@ -1277,15 +1282,25 @@
       });
 
       function showUpdateBanner(newWorker) {
+        // Store the new service worker globally for the settings button
+        window.newServiceWorker = newWorker;
+
+        // Show the banner
         const banner = document.getElementById('update-banner');
         const updateBtn = document.getElementById('update-btn');
-
         banner.classList.add('show');
 
         updateBtn.addEventListener('click', () => {
           // Tell the new service worker to skip waiting and take over
           newWorker.postMessage({ type: 'SKIP_WAITING' });
         });
+
+        // Update the settings dropdown button
+        const settingsUpdateBtn = document.getElementById('settings-update-btn');
+        if (settingsUpdateBtn) {
+          settingsUpdateBtn.classList.add('update-available');
+          settingsUpdateBtn.textContent = 'Update Version ✨';
+        }
       }
     }
   </script>

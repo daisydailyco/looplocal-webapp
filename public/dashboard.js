@@ -46,7 +46,7 @@ const addSaveBtn = document.getElementById('add-save-btn');
 const logoutBtn = document.getElementById('logout-btn');
 const settingsBtn = document.getElementById('settings-btn');
 const settingsDropdown = document.getElementById('settings-dropdown');
-const updateBtn = document.getElementById('update-btn');
+const settingsUpdateBtn = document.getElementById('settings-update-btn');
 
 // Typing animation for tagline
 const typingWords = ['Community', 'Saves', 'Events', 'Calendar', 'Posts'];
@@ -168,8 +168,8 @@ function initEventListeners() {
     }
   });
 
-  // Update button
-  updateBtn.addEventListener('click', handleUpdate);
+  // Update button in settings dropdown
+  settingsUpdateBtn.addEventListener('click', handleUpdate);
 
   // Logout button
   logoutBtn.addEventListener('click', handleLogout);
@@ -195,38 +195,26 @@ function initEventListeners() {
 
 // Handle update to newest version
 async function handleUpdate() {
-  updateBtn.disabled = true;
-  updateBtn.textContent = 'Updating...';
+  settingsUpdateBtn.disabled = true;
+  settingsUpdateBtn.textContent = 'Updating...';
 
   try {
-    // Clear all caches first
-    if ('caches' in window) {
-      const cacheNames = await caches.keys();
-      await Promise.all(
-        cacheNames.map(cacheName => caches.delete(cacheName))
-      );
-    }
-
-    // Force service worker to update
-    if ('serviceWorker' in navigator) {
-      const registration = await navigator.serviceWorker.getRegistration();
-      if (registration) {
-        // Unregister the service worker
-        await registration.unregister();
-
-        // Wait a moment for unregistration to complete
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        // Register the service worker again
-        await navigator.serviceWorker.register('/service-worker.js');
+    // Check if there's a new service worker available
+    if (window.newServiceWorker) {
+      // Tell the new service worker to skip waiting and take over
+      window.newServiceWorker.postMessage({ type: 'SKIP_WAITING' });
+    } else {
+      // Fallback: clear cache and reload
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(
+          cacheNames.map(cacheName => caches.delete(cacheName))
+        );
       }
+      window.location.reload(true);
     }
-
-    // Force a hard reload to get fresh content
-    window.location.reload(true);
   } catch (error) {
     console.error('Update error:', error);
-    // If update fails, just do a hard reload
     window.location.reload(true);
   }
 }
