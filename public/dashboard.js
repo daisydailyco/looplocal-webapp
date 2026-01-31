@@ -44,6 +44,9 @@ const editForm = document.getElementById('edit-form');
 // Buttons
 const addSaveBtn = document.getElementById('add-save-btn');
 const logoutBtn = document.getElementById('logout-btn');
+const settingsBtn = document.getElementById('settings-btn');
+const settingsDropdown = document.getElementById('settings-dropdown');
+const updateBtn = document.getElementById('update-btn');
 
 // Initialize dashboard
 async function init() {
@@ -110,6 +113,22 @@ async function fetchSaves() {
 
 // Initialize event listeners
 function initEventListeners() {
+  // Settings dropdown toggle
+  settingsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    settingsDropdown.classList.toggle('show');
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!settingsBtn.contains(e.target) && !settingsDropdown.contains(e.target)) {
+      settingsDropdown.classList.remove('show');
+    }
+  });
+
+  // Update button
+  updateBtn.addEventListener('click', handleUpdate);
+
   // Logout button
   logoutBtn.addEventListener('click', handleLogout);
 
@@ -132,11 +151,53 @@ function initEventListeners() {
   editForm.addEventListener('submit', handleEditSave);
 }
 
+// Handle update to newest version
+async function handleUpdate() {
+  updateBtn.disabled = true;
+  updateBtn.textContent = 'Updating...';
+
+  try {
+    // Force service worker to update
+    if ('serviceWorker' in navigator) {
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (registration) {
+        await registration.update();
+
+        // Tell the service worker to skip waiting and activate immediately
+        const waiting = registration.waiting || registration.installing;
+        if (waiting) {
+          waiting.postMessage({ type: 'SKIP_WAITING' });
+
+          // Wait for the new service worker to activate
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            // Reload the page to get the latest version
+            window.location.reload();
+          });
+        } else {
+          // No update available, just reload
+          window.location.reload();
+        }
+      } else {
+        // No service worker registered, just reload
+        window.location.reload();
+      }
+    } else {
+      // Service workers not supported, just reload
+      window.location.reload();
+    }
+  } catch (error) {
+    console.error('Update error:', error);
+    // If update fails, just reload the page
+    window.location.reload();
+  }
+}
+
 // Handle logout
 async function handleLogout() {
   logoutBtn.disabled = true;
   logoutBtn.textContent = 'Logging out...';
 
+  settingsDropdown.classList.remove('show');
   await logout();
   window.location.href = '/';
 }
@@ -695,6 +756,27 @@ function closeViewModal() {
 // Open add modal
 function openAddModal() {
   addForm.reset();
+
+  // Populate category suggestions with user's existing categories
+  const categorySuggestions = document.getElementById('category-suggestions');
+  if (categorySuggestions) {
+    // Get unique categories from all saves
+    const categories = new Set();
+    allSaves.forEach(save => {
+      if (save.category) {
+        categories.add(save.category);
+      }
+    });
+
+    // Clear and populate datalist
+    categorySuggestions.innerHTML = '';
+    categories.forEach(category => {
+      const option = document.createElement('option');
+      option.value = category;
+      categorySuggestions.appendChild(option);
+    });
+  }
+
   addModal.classList.add('active');
 }
 

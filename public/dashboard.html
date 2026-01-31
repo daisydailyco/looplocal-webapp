@@ -61,15 +61,11 @@
       color: #000000;
     }
 
-    .user-email {
-      font-size: 14px;
-      color: #666;
-    }
-
     .nav-right {
       display: flex;
       gap: 12px;
       align-items: center;
+      position: relative;
     }
 
     .add-save-btn {
@@ -90,20 +86,102 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
-    .logout-btn {
-      padding: 12px 24px;
-      border: 1px solid #000000;
+    /* Settings Dropdown */
+    .settings-container {
+      position: relative;
+    }
+
+    .settings-btn {
+      width: 40px;
+      height: 40px;
+      border: 1px solid #e0e0e0;
       border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
       background: white;
-      color: #000000;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transition: all 0.2s;
     }
 
-    .logout-btn:hover {
+    .settings-btn:hover {
       background: #f0f0f0;
+      border-color: #000;
+    }
+
+    .settings-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: #000;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .settings-dropdown {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      min-width: 220px;
+      display: none;
+      z-index: 1000;
+    }
+
+    .settings-dropdown.show {
+      display: block;
+    }
+
+    .settings-dropdown-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .settings-dropdown-item:first-child {
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+
+    .settings-dropdown-item:last-child {
+      border-bottom: none;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+
+    .settings-dropdown-email {
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .settings-dropdown-btn {
+      width: 100%;
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 500;
+      color: #000;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 8px;
+    }
+
+    .settings-dropdown-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .settings-dropdown-btn.update-btn {
+      color: #42a746;
+    }
+
+    .settings-dropdown-btn.logout-btn {
+      color: #ff3b30;
     }
 
     /* Main Container */
@@ -767,16 +845,12 @@
       }
 
       .nav-left {
-        justify-content: space-between;
+        justify-content: center;
       }
 
       .nav-right {
         width: 100%;
-      }
-
-      .add-save-btn,
-      .logout-btn {
-        flex: 1;
+        justify-content: flex-end;
       }
 
       .tabs {
@@ -899,10 +973,31 @@
     <div class="top-nav">
       <div class="nav-left">
         <div class="logo">Lokeet</div>
-        <div class="user-email" id="user-email">user@example.com</div>
       </div>
       <div class="nav-right">
-        <button id="logout-btn" class="logout-btn">Log Out</button>
+        <div class="settings-container">
+          <button id="settings-btn" class="settings-btn">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M12 1v6m0 6v6m-11-7h6m6 0h6m-13.4 7.4l4.2-4.2m0 0l4.2-4.2m-4.2 4.2l4.2 4.2M6.3 6.3l4.2 4.2"></path>
+            </svg>
+          </button>
+          <div id="settings-dropdown" class="settings-dropdown">
+            <div class="settings-dropdown-item">
+              <div class="settings-dropdown-email" id="user-email">user@example.com</div>
+            </div>
+            <div class="settings-dropdown-item">
+              <button class="settings-dropdown-btn update-btn" id="update-btn">
+                Update to Newest Version
+              </button>
+            </div>
+            <div class="settings-dropdown-item">
+              <button class="settings-dropdown-btn logout-btn" id="logout-btn">
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1006,15 +1101,10 @@
 
         <div class="form-group">
           <label>Category</label>
-          <select id="add-category">
-            <option value="">Select category</option>
-            <option value="restaurant">Restaurant</option>
-            <option value="bar">Bar</option>
-            <option value="event">Event</option>
-            <option value="activity">Activity</option>
-            <option value="venue">Venue</option>
-            <option value="other">Other</option>
-          </select>
+          <input type="text" id="add-category" list="category-suggestions" placeholder="e.g., Free Workout Classes, Date Night Spots, Brunch">
+          <datalist id="category-suggestions">
+            <!-- User's existing categories will be populated here -->
+          </datalist>
         </div>
 
         <div class="form-group">
