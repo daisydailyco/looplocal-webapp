@@ -54,11 +54,30 @@
       gap: 16px;
     }
 
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
     .logo {
       font-size: 24px;
       font-weight: 700;
       letter-spacing: 2px;
       color: #000000;
+    }
+
+    .tagline {
+      font-size: 12px;
+      color: #666;
+      letter-spacing: 0.5px;
+    }
+
+    .typing-text {
+      display: inline-block;
+      min-width: 80px;
+      color: #000;
+      font-weight: 600;
     }
 
     .nav-right {
@@ -92,8 +111,7 @@
     }
 
     .settings-btn {
-      width: 40px;
-      height: 40px;
+      padding: 8px 16px;
       border: 1px solid #e0e0e0;
       border-radius: 8px;
       background: white;
@@ -102,21 +120,15 @@
       align-items: center;
       justify-content: center;
       transition: all 0.2s;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #000000;
     }
 
     .settings-btn:hover {
       background: #f0f0f0;
       border-color: #000;
-    }
-
-    .settings-btn svg {
-      width: 20px;
-      height: 20px;
-      stroke: #000;
-      fill: none;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
     }
 
     .settings-dropdown {
@@ -840,17 +852,30 @@
     /* Responsive */
     @media (max-width: 768px) {
       .top-nav {
-        flex-direction: column;
-        align-items: stretch;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
       }
 
       .nav-left {
-        justify-content: center;
+        justify-content: flex-start;
+      }
+
+      .logo {
+        font-size: 20px;
+      }
+
+      .tagline {
+        font-size: 11px;
       }
 
       .nav-right {
-        width: 100%;
         justify-content: flex-end;
+      }
+
+      .settings-btn {
+        padding: 6px 12px;
+        font-size: 16px;
       }
 
       .tabs {
@@ -972,16 +997,14 @@
     <!-- Top Navigation -->
     <div class="top-nav">
       <div class="nav-left">
-        <div class="logo">Lokeet</div>
+        <div class="logo-container">
+          <div class="logo">Lokeet</div>
+          <div class="tagline">Locate Your <span id="typing-text" class="typing-text">Community</span></div>
+        </div>
       </div>
       <div class="nav-right">
         <div class="settings-container">
-          <button id="settings-btn" class="settings-btn">
-            <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M12 1v6m0 6v6m-11-7h6m6 0h6m-13.4 7.4l4.2-4.2m0 0l4.2-4.2m-4.2 4.2l4.2 4.2M6.3 6.3l4.2 4.2"></path>
-            </svg>
-          </button>
+          <button id="settings-btn" class="settings-btn">Lokeet</button>
           <div id="settings-dropdown" class="settings-dropdown">
             <div class="settings-dropdown-item">
               <div class="settings-dropdown-email" id="user-email">user@example.com</div>

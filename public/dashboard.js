@@ -48,6 +48,45 @@ const settingsBtn = document.getElementById('settings-btn');
 const settingsDropdown = document.getElementById('settings-dropdown');
 const updateBtn = document.getElementById('update-btn');
 
+// Typing animation for tagline
+const typingWords = ['Community', 'Saves', 'Events', 'Calendar', 'Posts'];
+let typingWordIndex = 0;
+let typingCharIndex = 0;
+let isDeleting = false;
+let typingTimeout = null;
+
+function typeWriter() {
+  const typingElement = document.getElementById('typing-text');
+  if (!typingElement) return;
+
+  const currentWord = typingWords[typingWordIndex];
+
+  if (isDeleting) {
+    // Delete character
+    typingElement.textContent = currentWord.substring(0, typingCharIndex - 1);
+    typingCharIndex--;
+
+    if (typingCharIndex === 0) {
+      isDeleting = false;
+      typingWordIndex = (typingWordIndex + 1) % typingWords.length;
+      typingTimeout = setTimeout(typeWriter, 500); // Pause before typing next word
+    } else {
+      typingTimeout = setTimeout(typeWriter, 50); // Delete speed
+    }
+  } else {
+    // Type character
+    typingElement.textContent = currentWord.substring(0, typingCharIndex + 1);
+    typingCharIndex++;
+
+    if (typingCharIndex === currentWord.length) {
+      isDeleting = true;
+      typingTimeout = setTimeout(typeWriter, 2000); // Pause before deleting
+    } else {
+      typingTimeout = setTimeout(typeWriter, 100); // Type speed
+    }
+  }
+}
+
 // Initialize dashboard
 async function init() {
   try {
@@ -72,6 +111,9 @@ async function init() {
 
     // Initialize event listeners
     initEventListeners();
+
+    // Start typing animation
+    typeWriter();
 
     // Render initial view
     renderSaves();
